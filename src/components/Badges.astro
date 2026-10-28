@@ -1,0 +1,79 @@
+---
+// Live profile badges. The images are the platforms' official public badge
+// endpoints, so they update themselves as ranks/points change.
+interface Props {
+  heading?: string;
+}
+const { heading } = Astro.props;
+const htbId = '768648';
+const thmUser = 'giuskywalker';
+---
+<div class="badges">
+  {heading && <h2 class="section__h">{heading}</h2>}
+  <div class="badges__row">
+    <a
+      class="badges__item"
+      href={`https://app.hackthebox.com/users/${htbId}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="HackTheBox profile"
+    >
+      <img
+        src={`https://www.hackthebox.com/badge/image/${htbId}`}
+        alt="HackTheBox badge — giuskywalker"
+        loading="lazy"
+        decoding="async"
+        height="99"
+      />
+    </a>
+    <a
+      class="badges__item"
+      href={`https://tryhackme.com/p/${thmUser}`}
+      target="_blank"
+      rel="noopener noreferrer"
+      aria-label="TryHackMe profile"
+    >
+      <img
+        src={`https://tryhackme-badges.s3.amazonaws.com/${thmUser}.png`}
+        alt="TryHackMe badge — giuskywalker"
+        loading="lazy"
+        decoding="async"
+        height="99"
+      />
+    </a>
+  </div>
+</div>
+
+<style>
+  .badges__row {
+    display: flex;
+    flex-wrap: wrap;
+    gap: 16px;
+    align-items: stretch;
+    margin-top: 14px;
+  }
+  .badges__item {
+    display: block;
+    border: 1px solid var(--border-lit);
+    border-radius: 10px;
+    background: var(--bg-panel);
+    padding: 10px 14px;
+    line-height: 0;
+    transition: border-color 0.18s ease, box-shadow 0.18s ease, transform 0.18s ease;
+  }
+  .badges__item:hover {
+    border-color: var(--saber);
+    box-shadow: 0 0 18px rgba(255, 59, 59, 0.22);
+    transform: translateY(-2px);
+  }
+  .badges__item img {
+    display: block;
+    height: 99px;
+    width: auto;
+    max-width: 100%;
+  }
+  @media (max-width: 520px) {
+    .badges__item { width: 100%; }
+    .badges__item img { height: auto; width: 100%; }
+  }
+</style>

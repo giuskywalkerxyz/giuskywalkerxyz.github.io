@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Prompt from '../components/Prompt.astro';
+import Badges from '../components/Badges.astro';
 import { getCollection } from 'astro:content';
 
 const certs = (await getCollection('certifications', (c) => c.data.status === 'earned'))
@@ -41,6 +42,10 @@ const career = [
         </div>
       </div>
     </div>
+
+    <section class="section">
+      <Badges heading="platforms" />
+    </section>
 
     <section class="section">
       <h2 class="section__h">service record</h2>

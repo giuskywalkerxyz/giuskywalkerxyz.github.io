@@ -1,6 +1,7 @@
 ---
 import Base from '../layouts/Base.astro';
 import Prompt from '../components/Prompt.astro';
+import Badges from '../components/Badges.astro';
 import { getCollection } from 'astro:content';
 import { byDateDesc } from '../lib/sortByDate';
 
@@ -63,6 +64,7 @@ const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
               <a class="btn" href="https://app.hackthebox.com/users/768648">hackthebox ⟶</a>
               <a class="btn" href="https://tryhackme.com/p/giuskywalker">tryhackme ⟶</a>
             </div>
+            <Badges />
           </div>
         </div>
       </div>

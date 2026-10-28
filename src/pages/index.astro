@@ -4,8 +4,9 @@ import Prompt from '../components/Prompt.astro';
 import { getCollection } from 'astro:content';
 import { byDateDesc } from '../lib/sortByDate';
 
-const writeups = (await getCollection('writeups', (e) => !e.data.draft))
-  .sort(byDateDesc);
+const pub = (await getCollection('writeups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: false }));
+const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: true }));
+const writeups = [...pub, ...prot].sort(byDateDesc);
 const articles = (await getCollection('articles', (e) => !e.data.draft))
   .sort(byDateDesc);
 
@@ -74,9 +75,10 @@ const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
       {latestWriteups.map((w) => (
         <a class="card" href={`/writeups/${w.id}/`}>
           <div class="card__top">
-            <span class="card__title">{w.data.machine}</span>
+            <span class="card__title">{w.locked && <span title="sealed — unlock with the root flag">🔒 </span>}{w.data.machine}</span>
             <span class={diffClass(w.data.difficulty)}>{w.data.difficulty}</span>
             {w.data.points && <span class="badge badge--pts">+{w.data.points} pts</span>}
+            {w.locked && <span class="badge" style="color:var(--crawl);border-color:rgba(255,176,32,0.4);">active · sealed</span>}
           </div>
           <p class="card__summary">{w.data.summary}</p>
           <div class="card__meta">

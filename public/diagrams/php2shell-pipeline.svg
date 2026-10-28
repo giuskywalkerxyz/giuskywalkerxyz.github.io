@@ -1,0 +1,67 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 420" font-family="'JetBrains Mono','SFMono-Regular',ui-monospace,monospace" role="img" aria-label="php2shell pipeline: a code-execution primitive is turned into a web shell and then upgraded to an interactive reverse shell">
+  <defs>
+    <linearGradient id="bg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#05070d"/>
+    </linearGradient>
+    <marker id="arr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#ff3b3b"/>
+    </marker>
+    <style>
+      .box{fill:#0e1420;stroke:#24344f;stroke-width:1.5;rx:10;}
+      .lit{stroke:#c81e1e;}
+      .t{fill:#c7d2e4;font-size:14px;}
+      .h{fill:#eaf2ff;font-size:15px;font-weight:700;}
+      .dim{fill:#7f8ea8;font-size:12px;}
+      .red{fill:#ff3b3b;font-size:12px;font-weight:700;}
+      .amber{fill:#ffb020;font-size:11px;letter-spacing:.12em;}
+      .flow{stroke:#ff3b3b;stroke-width:2;fill:none;}
+    </style>
+  </defs>
+  <rect width="860" height="420" fill="url(#bg)"/>
+  <text x="30" y="40" class="amber">// PHP2SHELL — FROM A FOOTHOLD TO AN INTERACTIVE TTY</text>
+
+  <!-- stage 1: primitive -->
+  <rect x="30" y="70" width="230" height="120" rx="10" class="box"/>
+  <text x="45" y="98" class="h">1 · code-exec primitive</text>
+  <text x="45" y="124" class="dim">unrestricted upload (.php)</text>
+  <text x="45" y="144" class="dim">LFI + wrapper / log poison</text>
+  <text x="45" y="164" class="dim">php filter / deserialization</text>
+
+  <!-- stage 2: webshell -->
+  <rect x="315" y="70" width="230" height="120" rx="10" class="box lit"/>
+  <text x="330" y="98" class="h">2 · minimal web shell</text>
+  <text x="330" y="124" class="t">eval()/system() endpoint</text>
+  <text x="330" y="144" class="dim">single param, HTTP-driven</text>
+  <text x="330" y="164" class="red">stateless · noisy · fragile</text>
+
+  <!-- stage 3: reverse shell -->
+  <rect x="600" y="70" width="230" height="120" rx="10" class="box lit"/>
+  <text x="615" y="98" class="h">3 · reverse shell</text>
+  <text x="615" y="124" class="t">callback to attacker</text>
+  <text x="615" y="144" class="dim">bash/python/php -r</text>
+  <text x="615" y="164" class="red">interactive · outbound</text>
+
+  <!-- arrows row 1 -->
+  <line x1="260" y1="130" x2="312" y2="130" class="flow" marker-end="url(#arr)"/>
+  <line x1="545" y1="130" x2="597" y2="130" class="flow" marker-end="url(#arr)"/>
+
+  <!-- stage 4: stabilize -->
+  <rect x="315" y="250" width="515" height="120" rx="10" class="box"/>
+  <text x="330" y="278" class="h">4 · stabilize the TTY</text>
+  <text x="330" y="304" class="dim">python3 -c 'pty.spawn("/bin/bash")'</text>
+  <text x="330" y="324" class="dim">stty raw -echo; fg  ·  export TERM=xterm</text>
+  <text x="330" y="348" class="t">→ job control, arrow keys, tab-complete, su/sudo prompts</text>
+
+  <!-- listener -->
+  <rect x="30" y="250" width="230" height="120" rx="10" class="box"/>
+  <text x="45" y="278" class="h">attacker listener</text>
+  <text x="45" y="304" class="dim">nc -lvnp 443</text>
+  <text x="45" y="324" class="dim">or socat for raw PTY</text>
+  <text x="45" y="348" class="red">catches the callback</text>
+
+  <!-- arrows to stabilize -->
+  <path d="M715 190 L715 248" class="flow" marker-end="url(#arr)"/>
+  <path d="M315 310 L262 310" class="flow" marker-end="url(#arr)"/>
+  <text x="724" y="222" class="dim">connect</text>
+</svg>

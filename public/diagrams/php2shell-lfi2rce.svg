@@ -1,0 +1,71 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" font-family="'JetBrains Mono','SFMono-Regular',ui-monospace,monospace" role="img" aria-label="LFI to RCE via log poisoning: the attacker plants PHP in a log through the User-Agent header, then includes that log through the local file inclusion vulnerability to execute it">
+  <defs>
+    <linearGradient id="bg2" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/>
+      <stop offset="1" stop-color="#05070d"/>
+    </linearGradient>
+    <marker id="arr2" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#ff3b3b"/>
+    </marker>
+    <style>
+      .box2{fill:#0e1420;stroke:#24344f;stroke-width:1.5;}
+      .lit2{stroke:#c81e1e;}
+      .h2{fill:#eaf2ff;font-size:15px;font-weight:700;}
+      .t2{fill:#c7d2e4;font-size:13px;}
+      .dim2{fill:#7f8ea8;font-size:12px;}
+      .red2{fill:#ff3b3b;font-size:12px;font-weight:700;}
+      .amber2{fill:#ffb020;font-size:11px;letter-spacing:.12em;}
+      .flow2{stroke:#ff3b3b;stroke-width:2;fill:none;}
+      .step{fill:#ff3b3b;font-size:13px;font-weight:700;}
+    </style>
+  </defs>
+  <rect width="860" height="400" fill="url(#bg2)"/>
+  <text x="30" y="40" class="amber2">// LFI → RCE VIA LOG POISONING</text>
+
+  <!-- attacker -->
+  <rect x="30" y="70" width="180" height="90" rx="10" class="box2 lit2"/>
+  <text x="48" y="100" class="h2">attacker</text>
+  <text x="48" y="124" class="dim2">crafts request +</text>
+  <text x="48" y="142" class="dim2">poisoned header</text>
+
+  <!-- web server -->
+  <rect x="340" y="70" width="180" height="90" rx="10" class="box2"/>
+  <text x="358" y="100" class="h2">web server</text>
+  <text x="358" y="124" class="dim2">vulnerable param</text>
+  <text x="358" y="142" class="dim2">?page=../../..</text>
+
+  <!-- log file -->
+  <rect x="650" y="70" width="180" height="90" rx="10" class="box2"/>
+  <text x="668" y="100" class="h2">access.log</text>
+  <text x="668" y="124" class="dim2">records the</text>
+  <text x="668" y="142" class="dim2">User-Agent verbatim</text>
+
+  <!-- step 1 -->
+  <path d="M210 100 L338 100" class="flow2" marker-end="url(#arr2)"/>
+  <text x="222" y="92" class="step">1</text>
+  <text x="222" y="190" class="t2">GET / with</text>
+  <text x="222" y="208" class="dim2">User-Agent: &lt;?php …; ?&gt;</text>
+
+  <!-- step 2 -->
+  <path d="M520 100 L648 100" class="flow2" marker-end="url(#arr2)"/>
+  <text x="532" y="92" class="step">2</text>
+  <text x="560" y="190" class="dim2">payload written</text>
+  <text x="560" y="208" class="dim2">into the log</text>
+
+  <!-- step 3 include -->
+  <rect x="340" y="250" width="490" height="110" rx="10" class="box2 lit2"/>
+  <text x="358" y="280" class="h2">3 · include the poisoned log</text>
+  <text x="358" y="306" class="t2">?page=/var/log/apache2/access.log&amp;cmd=id</text>
+  <text x="358" y="330" class="dim2">PHP engine parses the log → the planted code runs</text>
+  <text x="358" y="350" class="red2">→ command execution as the web user</text>
+
+  <path d="M740 160 L740 210 L585 210 L585 248" class="flow2" marker-end="url(#arr2)"/>
+
+  <!-- result back to attacker -->
+  <rect x="30" y="250" width="270" height="110" rx="10" class="box2"/>
+  <text x="48" y="280" class="h2">4 · shell</text>
+  <text x="48" y="306" class="dim2">cmd output in response,</text>
+  <text x="48" y="326" class="dim2">then upgrade to a reverse</text>
+  <text x="48" y="346" class="dim2">shell + stable TTY</text>
+  <path d="M340 305 L302 305" class="flow2" marker-end="url(#arr2)"/>
+</svg>

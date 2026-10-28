@@ -1,7 +1,6 @@
 ---
 import Base from '../layouts/Base.astro';
 import Prompt from '../components/Prompt.astro';
-import RadioConsole from '../components/RadioConsole.astro';
 import { getCollection } from 'astro:content';
 
 const writeups = (await getCollection('writeups', (e) => !e.data.draft))
@@ -14,13 +13,7 @@ const latestArticles = articles.slice(0, 3);
 
 const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
 ---
-<Base title="giuskywalker.sh — hacker's holocron" active="home" wide>
-  <div class="home-grid">
-  <aside class="home-rail">
-    <p class="home-rail__label">imperial holonet</p>
-    <RadioConsole compact startChannel={4} />
-  </aside>
-  <div class="home-main">
+<Base title="giuskywalker.sh — hacker's holocron" active="home">
   <section class="hero">
     <p class="hero__crawl">A long time ago in a subnet far, far away…</p>
     <h1>I break into machines<br />and write down <span class="accent">how</span>.</h1>
@@ -116,6 +109,4 @@ const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
       </div>
     </section>
   )}
-  </div>
-  </div>
 </Base>

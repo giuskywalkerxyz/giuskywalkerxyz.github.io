@@ -6,9 +6,8 @@ interface Props {
   title: string;
   description?: string;
   active?: string;
-  wide?: boolean;
 }
-const { title, description = 'HackTheBox writeups, security research & field notes from giuskywalker.', active, wide = false } = Astro.props;
+const { title, description = 'HackTheBox writeups, security research & field notes from giuskywalker.', active } = Astro.props;
 const nav = [
   { href: '/', label: 'home', key: 'home' },
   { href: '/writeups/', label: 'writeups', key: 'writeups' },
@@ -44,7 +43,7 @@ const nav = [
       </div>
     </header>
 
-    <main class={wide ? 'wrap wrap--wide' : 'wrap'}>
+    <main class="wrap">
       <slot />
     </main>
 

@@ -10,7 +10,7 @@ const inProgress = certs.filter((c) => c.data.status === 'in-progress');
 const issuers = [...new Set(earned.map((c) => c.data.issuer))];
 
 const fmt = (d?: Date) =>
-  d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : undefined;
+  d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'short', timeZone: 'UTC' }) : undefined;
 ---
 <Base title="certs — giuskywalker.sh" active="certs" description="Offensive-security certifications held by giuskywalker.">
   <section class="article__head" style="padding-top:36px;">

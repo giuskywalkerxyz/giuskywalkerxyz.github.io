@@ -1,9 +1,18 @@
 {
   "code": "AD-RTS",
-  "name": "Active Directory Red Team Specialist",
+  "name": "Certified AD Red Team Specialist",
   "issuer": "CyberWarFare Labs",
   "track": "Red Team",
   "order": 5,
-  "skills": ["kerberos attacks", "acl abuse", "delegation", "domain trusts", "persistence"],
-  "summary": "Deep Active Directory tradecraft: Kerberos abuse, delegation, ACL attack paths, cross-trust movement and domain persistence."
+  "skills": [
+    "kerberos attacks",
+    "acl abuse",
+    "delegation",
+    "domain trusts",
+    "persistence"
+  ],
+  "summary": "Deep Active Directory tradecraft: Kerberos abuse, delegation, ACL attack paths, cross-trust movement and domain persistence.",
+  "issued": "2026-02",
+  "credentialId": "699f715e40af551f800ad3d7",
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/699f715e40af551f800ad3d7"
 }

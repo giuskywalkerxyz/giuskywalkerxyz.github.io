@@ -4,6 +4,15 @@
   "issuer": "INE Security",
   "track": "Pentest",
   "order": 1,
-  "skills": ["recon", "network pentest", "web basics", "metasploit", "pivoting"],
-  "summary": "Hands-on practical exam covering the full junior pentest loop: assessment methodology, host and network auditing, web app basics and post-exploitation."
+  "skills": [
+    "recon",
+    "network pentest",
+    "web basics",
+    "metasploit",
+    "pivoting"
+  ],
+  "summary": "Hands-on practical exam covering the full junior pentest loop: assessment methodology, host and network auditing, web app basics and post-exploitation.",
+  "issued": "2026-02",
+  "credentialId": "175078428",
+  "verifyUrl": "https://certs.ine.com/468dd1fa-8b36-4561-85ae-63dabab9e8af"
 }

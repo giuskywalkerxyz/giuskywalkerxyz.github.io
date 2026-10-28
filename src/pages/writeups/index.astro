@@ -1,0 +1,47 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const pub = (await getCollection('writeups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: false }));
+const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: true }));
+
+const all = [...pub, ...prot].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
+---
+<Base title="writeups — giuskywalker.sh" active="writeups" description="HackTheBox writeups. Retired boxes are open; active boxes are sealed with the root flag.">
+  <section class="article__head" style="padding-top:36px;">
+    <p class="article__kicker">// target log</p>
+    <h1>Writeups</h1>
+    <p class="muted" style="max-width:66ch;">
+      End-to-end writeups of boxes I've owned. <strong>Retired</strong> machines are open.
+      <strong>Active-season</strong> machines are 🔒 <strong>sealed</strong>: the full writeup is
+      AES-encrypted and the password is the machine's <strong>root flag</strong> — per HTB policy,
+      only operatives who've already rooted the box can read the chain.
+    </p>
+  </section>
+
+  <section class="section" style="margin-top:28px;">
+    <div class="cards">
+      {all.map((w) => (
+        <a class="card" href={`/writeups/${w.id}/`}>
+          <div class="card__top">
+            <span class="card__title">{w.locked && <span title="sealed — unlock with the root flag">🔒 </span>}{w.data.machine}</span>
+            <span class={diffClass(w.data.difficulty)}>{w.data.difficulty}</span>
+            {w.data.points && <span class="badge badge--pts">+{w.data.points} pts</span>}
+            {w.locked && <span class="badge" style="color:var(--crawl);border-color:rgba(255,176,32,0.4);">active · sealed</span>}
+          </div>
+          <p class="card__summary">{w.data.summary}</p>
+          <div class="card__meta">
+            <span>{w.data.platform}</span><span>·</span>
+            <span>{w.data.os}</span>
+            {w.data.season && <><span>·</span><span>{w.data.season}</span></>}
+            <span>·</span>
+            <span>{w.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+          </div>
+        </a>
+      ))}
+      {all.length === 0 && <p class="muted">No writeups published yet.</p>}
+    </div>
+  </section>
+</Base>

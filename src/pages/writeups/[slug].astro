@@ -1,0 +1,130 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const pub = await getCollection('writeups', (e) => !e.data.draft);
+  const prot = await getCollection('protectedWriteups', (e) => !e.data.draft);
+  return [
+    ...pub.map((entry) => ({ params: { slug: entry.id }, props: { kind: 'public', entry } })),
+    ...prot.map((entry) => ({ params: { slug: entry.id }, props: { kind: 'protected', entry } })),
+  ];
+}
+
+const { kind, entry } = Astro.props;
+const d = entry.data;
+const diffClass = `badge badge--${d.difficulty.toLowerCase()}`;
+
+let Content: any = null;
+if (kind === 'public') {
+  Content = (await render(entry)).Content;
+}
+---
+<Base title={`${d.machine} — writeup`} active="writeups" description={d.summary}>
+  <article class="article">
+    <div class="article__head">
+      <p class="article__kicker">// {d.platform} · writeup{kind === 'protected' ? ' · sealed' : ''}</p>
+      <h1>{kind === 'protected' && '🔒 '}{d.machine}</h1>
+      <div class="article__meta">
+        <span class={diffClass}>{d.difficulty}</span>
+        <span class="badge">{d.os}</span>
+        {d.points && <span class="badge badge--pts">+{d.points} pts</span>}
+        {d.season && <span class="badge">{d.season}</span>}
+        <span class="tag" style="margin-left:4px;">{d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+      </div>
+    </div>
+
+    {kind === 'public' && (
+      <div class="prose"><Content /></div>
+    )}
+
+    {kind === 'protected' && (
+      <>
+        <section id="gate" class="gate">
+          <div class="gate__lock" aria-hidden="true">🔒</div>
+          <h2 class="gate__title">Protected Report</h2>
+          <p class="gate__sub">
+            This writeup is for an <strong>active</strong> machine. The content is
+            AES-256-GCM encrypted — enter the password to decrypt it in your browser.
+          </p>
+
+          <div class="gate__file">
+            <div class="gate__file-name">📄 HTB Writeup — {d.machine} · {d.season}</div>
+            <div class="gate__file-meta">Last updated: {d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+          </div>
+
+          <div class="gate__notice">
+            <strong>⚠ HTB disclosure policy</strong>
+            <p>
+              Per HackTheBox rules, solutions for active machines may only be published
+              password-protected, with the password set to the machine's <strong>root flag</strong>.
+              Only those who have already rooted the box can unlock this.
+            </p>
+          </div>
+
+          <form id="gate-form" class="gate__form" autocomplete="off">
+            <label for="pw">Root flag</label>
+            <input id="pw" type="password" placeholder="HTB{…}" autocomplete="off" spellcheck="false" />
+            <button type="submit" class="btn btn--saber" style="width:100%;justify-content:center;">🔓 Unlock Report</button>
+            <p id="gate-err" class="gate__err" role="alert"></p>
+          </form>
+
+          <p style="margin-top:14px;"><a class="saber" href="/writeups/">⟵ back to all writeups</a></p>
+        </section>
+
+        <div id="report" class="prose" style="display:none;"></div>
+
+        <script type="application/json" id="cipher" set:html={JSON.stringify(d.payload)}></script>
+
+        <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+        <script is:inline>
+          (function () {
+            var form = document.getElementById('gate-form');
+            var input = document.getElementById('pw');
+            var errEl = document.getElementById('gate-err');
+            var gate = document.getElementById('gate');
+            var out = document.getElementById('report');
+            var data = JSON.parse(document.getElementById('cipher').textContent);
+
+            function b64(s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); }
+
+            form.addEventListener('submit', async function (e) {
+              e.preventDefault();
+              errEl.textContent = '';
+              var pw = input.value;
+              if (!pw) return;
+              try {
+                var enc = new TextEncoder();
+                var km = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
+                var key = await crypto.subtle.deriveKey(
+                  { name: 'PBKDF2', salt: b64(data.salt), iterations: data.iter, hash: 'SHA-256' },
+                  km,
+                  { name: 'AES-GCM', length: 256 },
+                  false,
+                  ['decrypt']
+                );
+                var ptBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(data.iv) }, key, b64(data.ct));
+                var md = new TextDecoder().decode(ptBuf);
+                out.innerHTML = window.marked ? window.marked.parse(md) : md;
+                gate.style.display = 'none';
+                out.style.display = 'block';
+                out.scrollIntoView({ behavior: 'smooth' });
+              } catch (err) {
+                errEl.textContent = '✗ Wrong flag — decryption failed.';
+                input.value = '';
+                input.focus();
+              }
+            });
+          })();
+        </script>
+      </>
+    )}
+
+    {kind === 'public' && (
+      <>
+        <hr class="prose" style="margin-top:40px;" />
+        <p class="muted"><a class="saber" href="/writeups/">⟵ back to all writeups</a></p>
+      </>
+    )}
+  </article>
+</Base>

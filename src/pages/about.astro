@@ -1,0 +1,69 @@
+---
+import Base from '../layouts/Base.astro';
+import Prompt from '../components/Prompt.astro';
+
+const certs = ['eJPTv2', 'CRTA', 'MCRTA', 'WEB-RTA', 'AD-RTS'];
+const career = [
+  { when: '2026 — now', what: 'Cybersecurity Lead · Sietch.tech', note: 'Leads the pentest team and owns the security infrastructure.' },
+  { when: '2025 — 2026', what: 'SOC Analyst · iT.eam', note: 'Detection, triage and incident response.' },
+  { when: 'earlier', what: 'NOC Analyst · K2 Telecom', note: 'Network operations & monitoring.' },
+  { when: 'ongoing', what: 'Bug bounty hunter · Intigriti', note: 'Web & application security research.' },
+];
+---
+<Base title="about — giuskywalker.sh" active="about" description="whoami — Giulliano Amaral, Cybersecurity Lead.">
+  <section class="article" style="padding-top:36px;">
+    <div class="term">
+      <div class="term__bar">
+        <span class="term__dot dot-r"></span>
+        <span class="term__dot dot-y"></span>
+        <span class="term__dot dot-g"></span>
+        <span class="term__title">giuskywalker@death-star: ~/about</span>
+      </div>
+      <div class="term__body">
+        <Prompt cmd="whoami" />
+        <p style="margin:10px 0 24px;">
+          <span class="saber">Giulliano Amaral</span> — a.k.a. <strong>giuskywalker</strong>.
+          Cybersecurity Lead, offensive-security practitioner and HackTheBox grinder.
+          I serve the dark side of the Force: breaking things on purpose, then
+          writing down exactly how so others can learn the craft.
+        </p>
+
+        <Prompt cmd="cat ./profile.json" />
+        <div class="profile" style="margin-top:12px;">
+          <div class="kv"><span class="k">role</span><span class="v">Cybersecurity Lead @ Sietch.tech</span></div>
+          <div class="kv"><span class="k">focus</span><span class="v">Pentest · Red Team · Bug Bounty · SOC</span></div>
+          <div class="kv"><span class="k">certs</span><span class="v">{certs.join(' · ')}</span></div>
+          <div class="kv"><span class="k">platforms</span><span class="v">HackTheBox · Intigriti</span></div>
+          <div class="kv"><span class="k">github</span><span class="v"><a class="saber" href="https://github.com/giuskywalkerxyz">github.com/giuskywalkerxyz</a></span></div>
+        </div>
+      </div>
+    </div>
+
+    <section class="section">
+      <h2 class="section__h">service record</h2>
+      <div class="cards">
+        {career.map((c) => (
+          <div class="card" style="cursor:default;">
+            <div class="card__top">
+              <span class="card__title" style="font-size:16px;">{c.what}</span>
+              <span class="badge">{c.when}</span>
+            </div>
+            <p class="card__summary" style="margin-bottom:0;">{c.note}</p>
+          </div>
+        ))}
+      </div>
+    </section>
+
+    <section class="section">
+      <h2 class="section__h">rules of engagement</h2>
+      <div class="prose">
+        <p>
+          Everything on this site is for <strong>educational and authorized
+          security-testing</strong> purposes only. Flags and credentials are redacted.
+          Writeups cover <strong>retired</strong> HackTheBox machines — active-season boxes
+          are never published while the chain would spoil them.
+        </p>
+      </div>
+    </section>
+  </section>
+</Base>

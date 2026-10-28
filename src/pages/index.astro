@@ -1,0 +1,112 @@
+---
+import Base from '../layouts/Base.astro';
+import Prompt from '../components/Prompt.astro';
+import { getCollection } from 'astro:content';
+
+const writeups = (await getCollection('writeups', (e) => !e.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const articles = (await getCollection('articles', (e) => !e.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+
+const latestWriteups = writeups.slice(0, 4);
+const latestArticles = articles.slice(0, 3);
+
+const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
+---
+<Base title="giuskywalker.sh — hacker's holocron" active="home">
+  <section class="hero">
+    <p class="hero__crawl">A long time ago in a subnet far, far away…</p>
+    <h1>I break into machines<br />and write down <span class="accent">how</span>.</h1>
+    <p class="lede">
+      Cybersecurity Lead by day, HackTheBox operative by night. This is my holocron:
+      full writeups of retired boxes, security research, and field notes from the dark side.
+    </p>
+    <div class="btnrow">
+      <a class="btn btn--saber" href="/writeups/">⟶ enter the archive</a>
+      <a class="btn" href="/about/">whoami</a>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="term">
+      <div class="term__bar">
+        <span class="term__dot dot-r"></span>
+        <span class="term__dot dot-y"></span>
+        <span class="term__dot dot-g"></span>
+        <span class="term__title">giuskywalker@death-star: ~</span>
+      </div>
+      <div class="term__body">
+        <Prompt cmd="whoami" />
+        <div class="whoami" style="margin-top:16px;">
+          <img
+            class="whoami__avatar"
+            src="/avatar.gif"
+            alt="giuskywalker avatar"
+            width="128"
+            height="128"
+            loading="lazy"
+          />
+          <div class="whoami__body">
+            <p class="whoami__name">Giulliano Amaral <span class="handle">· giuskywalker</span></p>
+            <p class="whoami__role">Offensive security · red teaming · bug bounty</p>
+            <div class="profile">
+              <div class="kv"><span class="k">age</span><span class="v">23</span></div>
+              <div class="kv"><span class="k">location</span><span class="v">Rio de Janeiro, Brazil</span></div>
+              <div class="kv"><span class="k">education</span><span class="v">Postgrad — Red Team</span></div>
+              <div class="kv"><span class="k">email</span><span class="v"><a class="saber" href="mailto:giuskywalker@proton.me">giuskywalker@proton.me</a></span></div>
+            </div>
+            <div class="whoami__socials">
+              <a class="btn" href="https://www.linkedin.com/in/giuskywalker">linkedin ⟶</a>
+              <a class="btn" href="https://github.com/giuskywalkerxyz">github ⟶</a>
+              <a class="btn" href="https://app.hackthebox.com/users/768648">hackthebox ⟶</a>
+              <a class="btn" href="https://tryhackme.com/p/giuskywalker">tryhackme ⟶</a>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section__h">latest writeups</h2>
+    <div class="cards">
+      {latestWriteups.map((w) => (
+        <a class="card" href={`/writeups/${w.id}/`}>
+          <div class="card__top">
+            <span class="card__title">{w.data.machine}</span>
+            <span class={diffClass(w.data.difficulty)}>{w.data.difficulty}</span>
+            {w.data.points && <span class="badge badge--pts">+{w.data.points} pts</span>}
+          </div>
+          <p class="card__summary">{w.data.summary}</p>
+          <div class="card__meta">
+            <span>{w.data.platform}</span><span>·</span>
+            <span>{w.data.os}</span>
+            {w.data.season && <><span>·</span><span>{w.data.season}</span></>}
+          </div>
+        </a>
+      ))}
+      {latestWriteups.length === 0 && <p class="muted">No writeups published yet.</p>}
+    </div>
+    <p style="margin-top:16px;"><a class="btn" href="/writeups/">all writeups ⟶</a></p>
+  </section>
+
+  {latestArticles.length > 0 && (
+    <section class="section">
+      <h2 class="section__h">from the logbook</h2>
+      <div class="cards">
+        {latestArticles.map((a) => (
+          <a class="card" href={`/articles/${a.id}/`}>
+            <div class="card__top">
+              <span class="card__title">{a.data.title}</span>
+            </div>
+            <p class="card__summary">{a.data.summary}</p>
+            <div class="card__meta">
+              <span>{a.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+              {a.data.tags.slice(0, 3).map((t) => <span class="tag">{t}</span>)}
+            </div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+</Base>

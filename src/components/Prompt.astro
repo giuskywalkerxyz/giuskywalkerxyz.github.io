@@ -1,0 +1,11 @@
+---
+interface Props {
+  cmd: string;
+  path?: string;
+  cursor?: boolean;
+}
+const { cmd, path = '~', cursor = false } = Astro.props;
+---
+<div class="prompt">
+  <span class="user">giuskywalker</span><span class="sep">@</span><span class="host">death-star</span><span class="sep">:</span><span class="path">{path}</span><span class="sep">$</span> {cmd}{cursor && <span class="cursor"></span>}
+</div>

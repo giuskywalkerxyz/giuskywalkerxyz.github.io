@@ -1,0 +1,26 @@
+{
+  "title": "HackTheBox — Stream",
+  "machine": "Stream",
+  "platform": "HackTheBox",
+  "difficulty": "Medium",
+  "os": "Linux (Ubuntu 24.04)",
+  "season": "Season 12",
+  "points": 30,
+  "date": "2026-10-27",
+  "tags": [
+    "linux",
+    "active",
+    "season-12"
+  ],
+  "summary": "Active HTB Season 12 box — rooted. Sealed until it retires; unlock with the machine's root flag to read the full chain.",
+  "draft": false,
+  "payload": {
+    "v": 1,
+    "kdf": "PBKDF2-SHA256",
+    "iter": 210000,
+    "cipher": "AES-256-GCM",
+    "salt": "MA8KjN9qD84fqRZo6sum7w==",
+    "iv": "RxTTwyXdW6qXYrZJ",
+    "ct": "5UgH5/j5qktaajt7KQS0sr0oB5I+ijfl9gJGByX4J3VvDqehdlzyLfkywN2BkToe5C+40QO7ZUvy7Hv+3gkUYoEYYGsDoql+2Y0aHx5SQkOXfPmVdKkwR538ADoUX2bkwDXsE+PKYeMz75F7IY3pHhqdUHpJkr5R7RghHnTL42xPNciFrdAnKOImAxXX7NmV+cTzZdCRw5VXj6wwFzRmDZmsjVN6lMfER9I/gT5s8gYDc/+xcMnyrU/m5qEWOijU3uQhVmrHYBNB3b3+95DTp0HfB5yxmFW340yzzsEcx6ynv89jtjzFhp3Y4C9bLYm3iAZVyFRm/a149KbkoKArMz1pEQpGKgrZyNa2F2FyIK2i9edpAAovcoGhRFAt2WwNdqFp0Nm1bFITGn5LpK89rUBQTWg9DFkPAMmy2Rvb6ZAfxGOG3iOxsLgQRUUvVqhASwX48+5XL9xC7xL2RN6Ae19bEsvvgwOPTpxGTTnBohheau/1SEXHLHwtxKisiCYiFVstBHEjAd7Pt0t7f94nIuGVYokUB8XCARuLEpPf62j7ZAelT6bW/bKZnnwbGr/JCLxuad9JTHfyi3hRF1I="
+  }
+}

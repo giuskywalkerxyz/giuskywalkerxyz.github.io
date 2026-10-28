@@ -1,0 +1,9 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 32 32">
+  <rect width="32" height="32" rx="7" fill="#05070d"/>
+  <!-- lightsaber -->
+  <rect x="14.6" y="4" width="2.8" height="18" rx="1.4" fill="#ff3b3b">
+    <animate attributeName="opacity" values="1;0.7;1" dur="2s" repeatCount="indefinite"/>
+  </rect>
+  <rect x="14" y="21" width="4" height="7" rx="1" fill="#9aa7bd"/>
+  <rect x="14" y="23.5" width="4" height="1.2" fill="#ffd34d"/>
+</svg>

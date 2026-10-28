@@ -1,0 +1,26 @@
+{
+  "title": "HackTheBox — Dutybound",
+  "machine": "Dutybound",
+  "platform": "HackTheBox",
+  "difficulty": "Medium",
+  "os": "Linux (Ubuntu)",
+  "season": "Season 12",
+  "points": 30,
+  "date": "2026-10-27",
+  "tags": [
+    "linux",
+    "active",
+    "season-12"
+  ],
+  "summary": "Active HTB Season 12 box — rooted. Sealed until it retires; unlock with the machine's root flag to read the full chain.",
+  "draft": false,
+  "payload": {
+    "v": 1,
+    "kdf": "PBKDF2-SHA256",
+    "iter": 210000,
+    "cipher": "AES-256-GCM",
+    "salt": "82+NFTrO3PUE6p+mYx0Wng==",
+    "iv": "YLhFOsDsrsspGcRC",
+    "ct": "uUJ+CgLockPQRNR5eleuR0SAYM86lZ+LEnTPxEIFbHvU52fP3EXpa8Um8H9BAiokERt7tEZHAdEgv/z7snyx7BOuSqO/kseo5Z+oZBU7tOsUr+XwafiQfxgAeuMMrkQljX/FteOJUYgo+pDEml5tkElDlvwh8vB8OGV+C4DOgIo0y5I5q+1lE2pVHiMeD+f03IqJ0dblEZqGQULEoUBEyRwsihUiuGMPicdnsk+Rr/ullxdBsRP/V6Q4nJBkRANwgcb0qv/r700auMHqOGm6okSWzwCZ7N0FWmUvBVV1+plWKQ/ur0NpFU23wq5rYNDG9o1At7zgfJ9MbGTbmFmNx4m9bmlsqTP0WbbvY0nLP8irhxu6BjK08YZFXBZwwag11KJyBAM69B4lXcraBdmllM5fTmrltadTpgXu97scRD7BDEyssrKlxDzWDQjhD7tKOiLePiq4g+U1364bvQzgFeVM+JzEjvl6IcTc+GnCcQWz3/81+JwTww/WjSz5qYPZ+sskSxuqrlJE0ksB+8NwTOS+6bc7NSIHj4Rzx0HLrw+8MvIiJlSQGoJrXxEKahWeFAWM6+hBAXSoFdcUtYg="
+  }
+}

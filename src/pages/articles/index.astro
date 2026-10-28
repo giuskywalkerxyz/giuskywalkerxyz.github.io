@@ -1,0 +1,34 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+
+const articles = (await getCollection('articles', (e) => !e.data.draft))
+  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+---
+<Base title="articles — giuskywalker.sh" active="articles" description="Security research, tooling and field notes.">
+  <section class="article__head" style="padding-top:36px;">
+    <p class="article__kicker">// logbook</p>
+    <h1>Articles</h1>
+    <p class="muted" style="max-width:62ch;">
+      Security research, tooling, technique deep-dives and the occasional war story.
+    </p>
+  </section>
+
+  <section class="section" style="margin-top:28px;">
+    <div class="cards">
+      {articles.map((a) => (
+        <a class="card" href={`/articles/${a.id}/`}>
+          <div class="card__top">
+            <span class="card__title">{a.data.title}</span>
+          </div>
+          <p class="card__summary">{a.data.summary}</p>
+          <div class="card__meta">
+            <span>{a.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+            {a.data.tags.slice(0, 4).map((t) => <span class="tag">{t}</span>)}
+          </div>
+        </a>
+      ))}
+      {articles.length === 0 && <p class="muted">No articles yet — first transmission incoming.</p>}
+    </div>
+  </section>
+</Base>

@@ -1,0 +1,44 @@
+---
+// Three parallax star layers rendered as box-shadow dot fields.
+function field(count: number, size: number) {
+  const shadows: string[] = [];
+  for (let i = 0; i < count; i++) {
+    const x = Math.floor(Math.random() * 2000);
+    const y = Math.floor(Math.random() * 2000);
+    shadows.push(`${x}px ${y}px #fff`);
+  }
+  return { shadows: shadows.join(', '), size };
+}
+const near = field(90, 2);
+const mid = field(140, 1.5);
+const far = field(220, 1);
+---
+<div class="space" aria-hidden="true"></div>
+<div class="starfield" aria-hidden="true">
+  <span class="layer" style={`--sz:${near.size}px; box-shadow:${near.shadows};`}></span>
+  <span class="layer" style={`--sz:${mid.size}px; box-shadow:${mid.shadows}; opacity:.7;`}></span>
+  <span class="layer" style={`--sz:${far.size}px; box-shadow:${far.shadows}; opacity:.45;`}></span>
+</div>
+
+<style>
+  .starfield { position: fixed; inset: 0; z-index: -1; pointer-events: none; overflow: hidden; }
+  .layer {
+    position: absolute;
+    top: 0;
+    left: 0;
+    width: var(--sz);
+    height: var(--sz);
+    border-radius: 50%;
+    background: transparent;
+    animation: drift 180s linear infinite;
+  }
+  .layer:nth-child(2) { animation-duration: 260s; }
+  .layer:nth-child(3) { animation-duration: 360s; }
+  @keyframes drift {
+    from { transform: translateY(0); }
+    to   { transform: translateY(-1000px); }
+  }
+  @media (prefers-reduced-motion: reduce) {
+    .layer { animation: none; }
+  }
+</style>

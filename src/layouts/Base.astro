@@ -1,0 +1,59 @@
+---
+import Starfield from '../components/Starfield.astro';
+import '../styles/global.css';
+
+interface Props {
+  title: string;
+  description?: string;
+  active?: string;
+}
+const { title, description = 'HackTheBox writeups, security research & field notes from giuskywalker.', active } = Astro.props;
+const nav = [
+  { href: '/', label: 'home', key: 'home' },
+  { href: '/writeups/', label: 'writeups', key: 'writeups' },
+  { href: '/articles/', label: 'articles', key: 'articles' },
+  { href: '/about/', label: 'about', key: 'about' },
+];
+---
+<!doctype html>
+<html lang="en">
+  <head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1" />
+    <meta name="description" content={description} />
+    <meta name="generator" content={Astro.generator} />
+    <title>{title}</title>
+    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="preconnect" href="https://fonts.googleapis.com" />
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
+    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+  </head>
+  <body>
+    <Starfield />
+    <header class="topbar">
+      <div class="wrap">
+        <a class="brand" href="/">giuskywalker<span class="sigil">.sh</span></a>
+        <nav class="nav">
+          {nav.map((n) => (
+            <a href={n.href} aria-current={active === n.key ? 'page' : undefined}>{n.label}</a>
+          ))}
+        </nav>
+      </div>
+    </header>
+
+    <main class="wrap">
+      <slot />
+    </main>
+
+    <footer class="footer">
+      <div class="wrap">
+        <div class="footer__crawl">Give in to the dark side of the Force.</div>
+        <p class="muted" style="margin:8px 0 0;">
+          © {new Date().getFullYear()} giuskywalker ·
+          <a href="https://github.com/giuskywalkerxyz">github</a> ·
+          built with <a href="https://astro.build">astro</a>
+        </p>
+      </div>
+    </footer>
+  </body>
+</html>

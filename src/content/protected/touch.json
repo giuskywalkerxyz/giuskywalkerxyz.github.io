@@ -1,0 +1,26 @@
+{
+  "title": "HackTheBox — Touch",
+  "machine": "Touch",
+  "platform": "HackTheBox",
+  "difficulty": "Medium",
+  "os": "Windows",
+  "season": "Season 12",
+  "points": 20,
+  "date": "2026-10-27",
+  "tags": [
+    "windows",
+    "active",
+    "season-12"
+  ],
+  "summary": "Active HTB Season 12 box — rooted. Sealed until it retires; unlock with the machine's root flag to read the full chain.",
+  "draft": false,
+  "payload": {
+    "v": 1,
+    "kdf": "PBKDF2-SHA256",
+    "iter": 210000,
+    "cipher": "AES-256-GCM",
+    "salt": "fZOGsHZl21nV2TdcBu/GJQ==",
+    "iv": "14djVeCE2MGJUpIK",
+    "ct": "n20Nsy6zwl1yISYcirQ5Q01p+zqXQN6gnEuam9H5Dk2btHaMm+RSTz7xNGsDgr2RhtrZAu/wZnLPxvHSfCTNlLTlM/52+j9FuIlVtOHHGTclHWl+O02vxEXWpvPgxH3LA7ZyC6YI98yPk+2iVeGyJEzv0V0II9NNGoig0MIaTw5dws8C6B4fWLJvtTeVrhStzT10SCUMV4h1w97JSjNcfLsu2DR+/hk5Z+EjGn/fDFJWXupsuVOfpoPdGQMV3EIjxye9Y5aTZEXojnTUAhxfcUn7XNoj17pdxyw5ZbMcHQMh+EOCrAleG0GPtL453srCFoBjPXDjJrr6hh/VKe9vjJAHlnguD8EMXvcUwyHDRGCK+XLtYymyyNpQeTpA0jT4ARyEfaMZ5aWG2Kkf6u/tHHf/UFscI+JAWRD6lVaZDua4V3DGse/GV8JVm+MTGqq94/5+MfzvmO/hoUZFT8PtsZCrVOE42zejEoF/FPWIJ611yDS3uJOWBGtb7UNgv/x8jdaRYzqr4c9S7DXRiCGibULYpFuxq3z5U2i7OU3yV7RIrVVKdLih8WDJoz+MdrQ5dEPWDgQWrJiIUaHkbfI="
+  }
+}

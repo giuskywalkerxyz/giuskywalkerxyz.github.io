@@ -1,0 +1,16 @@
+# build output
+dist/
+# dependencies
+node_modules/
+# astro
+.astro/
+# env
+.env
+.env.production
+# macOS
+.DS_Store
+# logs
+npm-debug.log*
+
+# active-machine plaintext writeups — NEVER commit (sealed into src/content/protected/ as ciphertext)
+protected-src/

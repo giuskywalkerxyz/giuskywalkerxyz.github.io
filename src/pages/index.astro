@@ -2,11 +2,12 @@
 import Base from '../layouts/Base.astro';
 import Prompt from '../components/Prompt.astro';
 import { getCollection } from 'astro:content';
+import { byDateDesc } from '../lib/sortByDate';
 
 const writeups = (await getCollection('writeups', (e) => !e.data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort(byDateDesc);
 const articles = (await getCollection('articles', (e) => !e.data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort(byDateDesc);
 
 const latestWriteups = writeups.slice(0, 4);
 const latestArticles = articles.slice(0, 3);

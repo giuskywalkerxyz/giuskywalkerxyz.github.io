@@ -1,9 +1,10 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { byDateDesc } from '../../lib/sortByDate';
 
 const articles = (await getCollection('articles', (e) => !e.data.draft))
-  .sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+  .sort(byDateDesc);
 ---
 <Base title="articles — giuskywalker.sh" active="articles" description="Security research, tooling and field notes.">
   <section class="article__head" style="padding-top:36px;">

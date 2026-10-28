@@ -1,11 +1,12 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
+import { byDateDesc } from '../../lib/sortByDate';
 
 const pub = (await getCollection('writeups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: false }));
 const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: true }));
 
-const all = [...pub, ...prot].sort((a, b) => b.data.date.valueOf() - a.data.date.valueOf());
+const all = [...pub, ...prot].sort(byDateDesc);
 
 const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
 ---

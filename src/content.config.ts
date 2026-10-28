@@ -58,4 +58,22 @@ const articles = defineCollection({
   }),
 });
 
-export const collections = { writeups, protectedWriteups, articles };
+const certifications = defineCollection({
+  loader: glob({ pattern: '**/*.json', base: './src/content/certifications' }),
+  schema: z.object({
+    code: z.string(),
+    name: z.string(),
+    issuer: z.string(),
+    track: z.string(),
+    status: z.enum(['earned', 'in-progress']).default('earned'),
+    issued: z.coerce.date().optional(),
+    expires: z.coerce.date().optional(),
+    credentialId: z.string().optional(),
+    verifyUrl: z.string().url().optional(),
+    skills: z.array(z.string()).default([]),
+    summary: z.string(),
+    order: z.number().default(99),
+  }),
+});
+
+export const collections = { writeups, protectedWriteups, articles, certifications };

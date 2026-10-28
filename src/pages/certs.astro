@@ -1,0 +1,87 @@
+---
+import Base from '../layouts/Base.astro';
+import Prompt from '../components/Prompt.astro';
+import { getCollection } from 'astro:content';
+
+const certs = (await getCollection('certifications'))
+  .sort((a, b) => a.data.order - b.data.order);
+const earned = certs.filter((c) => c.data.status === 'earned');
+const inProgress = certs.filter((c) => c.data.status === 'in-progress');
+const issuers = [...new Set(earned.map((c) => c.data.issuer))];
+
+const fmt = (d?: Date) =>
+  d ? d.toLocaleDateString('en-US', { year: 'numeric', month: 'short' }) : undefined;
+---
+<Base title="certs — giuskywalker.sh" active="certs" description="Offensive-security certifications held by giuskywalker.">
+  <section class="article__head" style="padding-top:36px;">
+    <p class="article__kicker">// imperial clearance</p>
+    <h1>Certifications</h1>
+    <p class="muted" style="max-width:62ch;">
+      Practical, lab-based offensive-security certs — pentest, red team, Active Directory, web and cloud.
+    </p>
+  </section>
+
+  <section class="section" style="margin-top:28px;">
+    <div class="term">
+      <div class="term__bar">
+        <span class="term__dot dot-r"></span>
+        <span class="term__dot dot-y"></span>
+        <span class="term__dot dot-g"></span>
+        <span class="term__title">giuskywalker@death-star: ~/certs</span>
+      </div>
+      <div class="term__body">
+        <Prompt cmd="ls ~/certs | wc -l" />
+        <p style="margin:6px 0 16px;"><span class="saber">{earned.length}</span> certifications earned · {issuers.length} issuers</p>
+        <Prompt cmd="ls ~/certs" />
+        <div class="certls">
+          {earned.map((c) => <a href={`#${c.id}`}>{c.data.code}</a>)}
+        </div>
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <h2 class="section__h">clearances</h2>
+    <div class="certgrid">
+      {earned.map((c) => (
+        <article class="cert" id={c.id}>
+          <div class="cert__top">
+            <span class="cert__code">{c.data.code}</span>
+            <span class="badge">{c.data.track}</span>
+          </div>
+          <p class="cert__name">{c.data.name}</p>
+          <p class="cert__issuer">{c.data.issuer}{fmt(c.data.issued) && <> · {fmt(c.data.issued)}</>}</p>
+          <p class="card__summary">{c.data.summary}</p>
+          <div class="card__meta">
+            {c.data.skills.map((s) => <span class="tag">{s.replace(/\s+/g, '-')}</span>)}
+          </div>
+          {(c.data.verifyUrl || c.data.credentialId) && (
+            <div class="cert__foot">
+              {c.data.credentialId && <span class="muted">id: {c.data.credentialId}</span>}
+              {c.data.verifyUrl && <a class="cert__verify" href={c.data.verifyUrl} target="_blank" rel="noopener">verify ↗</a>}
+            </div>
+          )}
+        </article>
+      ))}
+    </div>
+  </section>
+
+  {inProgress.length > 0 && (
+    <section class="section">
+      <h2 class="section__h">in training</h2>
+      <div class="certgrid">
+        {inProgress.map((c) => (
+          <article class="cert cert--wip" id={c.id}>
+            <div class="cert__top">
+              <span class="cert__code">{c.data.code}</span>
+              <span class="badge badge--medium">in progress</span>
+            </div>
+            <p class="cert__name">{c.data.name}</p>
+            <p class="cert__issuer">{c.data.issuer}</p>
+            <p class="card__summary">{c.data.summary}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+</Base>

@@ -1,8 +1,11 @@
 ---
 import Base from '../layouts/Base.astro';
 import Prompt from '../components/Prompt.astro';
+import { getCollection } from 'astro:content';
 
-const certs = ['eJPTv2', 'CRTA', 'MCRTA', 'WEB-RTA', 'AD-RTS'];
+const certs = (await getCollection('certifications', (c) => c.data.status === 'earned'))
+  .sort((a, b) => a.data.order - b.data.order)
+  .map((c) => c.data.code);
 const career = [
   { when: '2026 — now', what: 'Cybersecurity Lead · Sietch.tech', note: 'Leads the pentest team and owns the security infrastructure.' },
   { when: '2025 — 2026', what: 'SOC Analyst · iT.eam', note: 'Detection, triage and incident response.' },
@@ -32,7 +35,7 @@ const career = [
         <div class="profile" style="margin-top:12px;">
           <div class="kv"><span class="k">role</span><span class="v">Cybersecurity Lead @ Sietch.tech</span></div>
           <div class="kv"><span class="k">focus</span><span class="v">Pentest · Red Team · Bug Bounty · SOC</span></div>
-          <div class="kv"><span class="k">certs</span><span class="v">{certs.join(' · ')}</span></div>
+          <div class="kv"><span class="k">certs</span><span class="v"><a class="saber" href="/certs/">{certs.join(' · ')}</a></span></div>
           <div class="kv"><span class="k">platforms</span><span class="v">HackTheBox · Intigriti</span></div>
           <div class="kv"><span class="k">github</span><span class="v"><a class="saber" href="https://github.com/giuskywalkerxyz">github.com/giuskywalkerxyz</a></span></div>
         </div>

@@ -1,0 +1,9 @@
+{
+  "code": "CRTA",
+  "name": "Certified Red Team Analyst",
+  "issuer": "CyberWarFare Labs",
+  "track": "Red Team",
+  "order": 2,
+  "skills": ["active directory", "lateral movement", "privilege escalation", "c2"],
+  "summary": "Red team fundamentals in an enterprise lab: initial access, credential abuse and moving laterally from the perimeter to domain compromise."
+}

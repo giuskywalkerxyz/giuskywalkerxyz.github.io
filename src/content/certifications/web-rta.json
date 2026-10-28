@@ -1,0 +1,9 @@
+{
+  "code": "WEB-RTA",
+  "name": "Web Red Team Analyst",
+  "issuer": "CyberWarFare Labs",
+  "track": "Web",
+  "order": 4,
+  "skills": ["web exploitation", "owasp top 10", "auth bypass", "chaining"],
+  "summary": "Web application attacks from a red team perspective: finding, chaining and weaponising web vulnerabilities into real access."
+}

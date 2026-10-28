@@ -1,0 +1,9 @@
+{
+  "code": "eJPTv2",
+  "name": "eLearnSecurity Junior Penetration Tester v2",
+  "issuer": "INE Security",
+  "track": "Pentest",
+  "order": 1,
+  "skills": ["recon", "network pentest", "web basics", "metasploit", "pivoting"],
+  "summary": "Hands-on practical exam covering the full junior pentest loop: assessment methodology, host and network auditing, web app basics and post-exploitation."
+}

@@ -353,6 +353,46 @@ body {
 .kv .k { color: var(--saber); min-width: 120px; }
 .kv .v { color: var(--fg); }
 
+/* ---- certifications ---- */
+.certls { display: flex; flex-wrap: wrap; gap: 6px 18px; margin-top: 6px; }
+.certls a { color: var(--crawl); text-decoration: none; }
+.certls a:hover { color: var(--saber); }
+.certgrid { display: grid; gap: 14px; grid-template-columns: repeat(auto-fill, minmax(260px, 1fr)); }
+.cert {
+  display: flex;
+  flex-direction: column;
+  background: var(--bg-panel);
+  border: 1px solid var(--border);
+  border-top: 3px solid var(--saber-glow);
+  border-radius: 8px;
+  padding: 16px 18px;
+  scroll-margin-top: 80px;
+  transition: border-color .15s, box-shadow .15s;
+}
+.cert:hover, .cert:target { border-top-color: var(--saber); box-shadow: 0 0 24px rgba(255,59,59,0.12); }
+.cert--wip { border-top-color: var(--crawl-dim); }
+.cert__top { display: flex; align-items: center; justify-content: space-between; gap: 10px; }
+.cert__code {
+  font-size: 22px;
+  font-weight: 700;
+  color: var(--saber);
+  text-shadow: 0 0 14px rgba(255,59,59,0.35);
+}
+.cert__name { color: #eaf2ff; font-size: 14px; font-weight: 500; margin: 8px 0 0; }
+.cert__issuer { color: var(--fg-faint); font-size: 12.5px; margin: 2px 0 0; }
+.cert .card__meta { margin-top: auto; }
+.cert__foot {
+  display: flex;
+  justify-content: space-between;
+  gap: 10px;
+  margin-top: 14px;
+  padding-top: 10px;
+  border-top: 1px dashed var(--border);
+  font-size: 12px;
+}
+.cert__verify { color: var(--saber); text-decoration: none; margin-left: auto; }
+.cert__verify:hover { text-decoration: underline; }
+
 /* ---- protected report gate ---- */
 .gate {
   max-width: 480px;

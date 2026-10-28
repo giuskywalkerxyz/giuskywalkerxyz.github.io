@@ -1,0 +1,9 @@
+{
+  "code": "MCRTA",
+  "name": "Multi-Cloud Red Team Analyst",
+  "issuer": "CyberWarFare Labs",
+  "track": "Cloud",
+  "order": 3,
+  "skills": ["aws", "azure", "gcp", "iam abuse", "cloud enumeration"],
+  "summary": "Offensive operations across AWS, Azure and GCP: enumeration, IAM misconfiguration abuse and pivoting between cloud services."
+}

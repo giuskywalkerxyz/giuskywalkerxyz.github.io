@@ -1,0 +1,74 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 860 400" font-family="'JetBrains Mono','SFMono-Regular',ui-monospace,monospace" role="img" aria-label="Defence in depth for an LLM application: a request passes through input screening, a hardened system prompt with instruction hierarchy, the aligned model, output filtering, and monitoring before reaching the user">
+  <defs>
+    <linearGradient id="dbg" x1="0" y1="0" x2="1" y2="1">
+      <stop offset="0" stop-color="#0b0f1a"/><stop offset="1" stop-color="#05070d"/>
+    </linearGradient>
+    <marker id="darr" viewBox="0 0 10 10" refX="9" refY="5" markerWidth="7" markerHeight="7" orient="auto-start-reverse">
+      <path d="M0 0L10 5L0 10z" fill="#ff3b3b"/>
+    </marker>
+    <style>
+      .bx{fill:#0e1420;stroke:#24344f;stroke-width:1.5;}
+      .lt{stroke:#c81e1e;}
+      .hh{fill:#eaf2ff;font-size:14px;font-weight:700;}
+      .dd{fill:#7f8ea8;font-size:11.5px;}
+      .rr{fill:#ff3b3b;font-size:11px;font-weight:700;}
+      .aa{fill:#ffb020;font-size:11px;letter-spacing:.12em;}
+      .ff{stroke:#ff3b3b;stroke-width:2;fill:none;}
+    </style>
+  </defs>
+  <rect width="860" height="400" fill="url(#dbg)"/>
+  <text x="30" y="40" class="aa">// DEFENCE IN DEPTH FOR AN LLM APP</text>
+
+  <rect x="30" y="70" width="150" height="150" rx="10" class="bx"/>
+  <text x="44" y="98" class="hh">untrusted</text>
+  <text x="44" y="116" class="hh">input</text>
+  <text x="44" y="146" class="dd">user turn,</text>
+  <text x="44" y="164" class="dd">retrieved docs,</text>
+  <text x="44" y="182" class="dd">tool output</text>
+
+  <rect x="215" y="70" width="150" height="150" rx="10" class="bx lt"/>
+  <text x="229" y="98" class="hh">1 · input</text>
+  <text x="229" y="116" class="hh">screening</text>
+  <text x="229" y="146" class="dd">classifier for</text>
+  <text x="229" y="164" class="dd">injection, encoding,</text>
+  <text x="229" y="182" class="dd">known patterns</text>
+
+  <rect x="400" y="70" width="150" height="150" rx="10" class="bx lt"/>
+  <text x="414" y="98" class="hh">2 · system</text>
+  <text x="414" y="116" class="hh">prompt</text>
+  <text x="414" y="146" class="dd">instruction</text>
+  <text x="414" y="164" class="dd">hierarchy; data</text>
+  <text x="414" y="182" class="dd">is never commands</text>
+
+  <rect x="585" y="70" width="150" height="150" rx="10" class="bx lt"/>
+  <text x="599" y="98" class="hh">3 · aligned</text>
+  <text x="599" y="116" class="hh">model</text>
+  <text x="599" y="146" class="dd">RLHF refusals,</text>
+  <text x="599" y="164" class="dd">adversarial</text>
+  <text x="599" y="182" class="dd">training</text>
+
+  <rect x="585" y="250" width="150" height="110" rx="10" class="bx lt"/>
+  <text x="599" y="278" class="hh">4 · output</text>
+  <text x="599" y="296" class="hh">filter</text>
+  <text x="599" y="322" class="dd">scan + sandbox</text>
+  <text x="599" y="340" class="dd">before render/exec</text>
+
+  <rect x="400" y="250" width="150" height="110" rx="10" class="bx"/>
+  <text x="414" y="278" class="hh">5 · monitor</text>
+  <text x="414" y="304" class="dd">log, rate-limit,</text>
+  <text x="414" y="324" class="dd">flag anomalies,</text>
+  <text x="414" y="344" class="dd">red-team loop</text>
+
+  <rect x="215" y="250" width="150" height="110" rx="10" class="bx"/>
+  <text x="229" y="278" class="hh">user</text>
+  <text x="229" y="304" class="dd">least privilege;</text>
+  <text x="229" y="324" class="dd">model output is</text>
+  <text x="229" y="344" class="rr">untrusted too</text>
+
+  <line x1="180" y1="145" x2="212" y2="145" class="ff" marker-end="url(#darr)"/>
+  <line x1="365" y1="145" x2="397" y2="145" class="ff" marker-end="url(#darr)"/>
+  <line x1="550" y1="145" x2="582" y2="145" class="ff" marker-end="url(#darr)"/>
+  <path d="M660 220 L660 248" class="ff" marker-end="url(#darr)"/>
+  <path d="M585 305 L552 305" class="ff" marker-end="url(#darr)"/>
+  <path d="M400 305 L367 305" class="ff" marker-end="url(#darr)"/>
+</svg>

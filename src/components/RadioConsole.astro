@@ -1,0 +1,578 @@
+---
+// Imperial HoloNet Radio console. All audio is synthesised in-browser (Web Audio
+// API) — original ominous ambience and an original Imperial march, NOT any
+// copyrighted score. All transmissions are original in-character writing.
+interface Props {
+  compact?: boolean;
+  startChannel?: number;
+}
+const { compact = false, startChannel = 0 } = Astro.props;
+---
+<div class={`console${compact ? ' console--mini' : ''}`} data-start={startChannel} aria-live="polite">
+  <div class="console__bar">
+    <span class="led" data-el="led"></span>
+    <span class="console__title"><span class="t-full">IMPERIAL HOLONET</span><span class="t-freq"> · FREQ 11.4D</span></span>
+    <span class="console__status" data-el="status">OFFLINE</span>
+  </div>
+
+  <div class="console__body">
+    <canvas class="scope" data-el="scope" width="820" height="150"></canvas>
+
+    <div class="nowplaying">
+      <span class="np__label">NOW BROADCASTING</span>
+      <span class="np__channel" data-el="channel">— standby —</span>
+    </div>
+
+    <div class="feed" data-el="feed">
+      <div class="feed__head">
+        <span class="feed__dot"></span>
+        <span data-el="feedHead">▶ CHANNEL SILENT</span>
+      </div>
+      <p class="feed__text" data-el="feedText">Power the console to open the frequency.</p>
+      <p class="feed__from" data-el="feedFrom"></p>
+    </div>
+
+    <div class="controls">
+      <button class="rbtn rbtn--power" data-el="power" type="button" aria-pressed="false">⏻ POWER</button>
+      <button class="rbtn" data-el="prev" type="button" disabled>◀ CH</button>
+      <button class="rbtn" data-el="next" type="button" disabled>CH ▶</button>
+      <button class="rbtn" data-el="transmit" type="button" disabled>⚡ TRANSMIT</button>
+      <button class="rbtn" data-el="voice" type="button" aria-pressed="true">🔊 VOICE</button>
+      <label class="vol">
+        <span>VOL</span>
+        <input type="range" data-el="volume" min="0" max="100" value="55" />
+      </label>
+    </div>
+  </div>
+
+  <div class="console__foot">
+    {compact
+      ? <a href="/radio/">open full console ↗</a>
+      : 'Original synthesised broadcast · no copyrighted audio · transmissions are in-character fiction · long live the Emperor.'}
+  </div>
+</div>
+
+<style>
+  .console {
+    max-width: 860px;
+    margin: 0 auto;
+    background: var(--bg-panel);
+    border: 1px solid var(--border-lit);
+    border-radius: 14px;
+    overflow: hidden;
+    box-shadow: 0 0 0 1px rgba(255,59,59,0.05), 0 26px 80px rgba(0,0,0,0.7), 0 0 50px rgba(255,59,59,0.08);
+  }
+  .console__bar {
+    display: flex; align-items: center; gap: 12px;
+    padding: 12px 18px;
+    background: var(--bg-panel2);
+    border-bottom: 1px solid var(--border);
+    font-size: 12.5px; letter-spacing: 0.14em; color: var(--fg-faint);
+  }
+  .led {
+    width: 12px; height: 12px; border-radius: 50%;
+    background: #3a1414; box-shadow: 0 0 0 1px #000 inset;
+    transition: background .2s, box-shadow .2s; flex-shrink: 0;
+  }
+  .led.on { background: var(--saber); box-shadow: 0 0 12px var(--saber), 0 0 24px var(--saber-glow); animation: pulse 2s ease-in-out infinite; }
+  @keyframes pulse { 50% { opacity: .55; } }
+  .console__title { color: var(--crawl); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
+  .console__status { margin-left: auto; color: var(--fg-faint); flex-shrink: 0; }
+  .console__status.live { color: var(--saber); text-shadow: 0 0 10px rgba(255,59,59,0.5); }
+
+  .console__body { padding: 20px 22px; }
+  .scope {
+    width: 100%; height: 150px; display: block;
+    background: #0a0e18; border: 1px solid var(--border); border-radius: 8px;
+    box-shadow: inset 0 0 40px rgba(255,59,59,0.05);
+  }
+
+  .nowplaying { display: flex; align-items: baseline; gap: 12px; margin: 16px 2px 14px; flex-wrap: wrap; }
+  .np__label { font-size: 11px; letter-spacing: 0.22em; color: var(--fg-faint); }
+  .np__channel { color: #eaf2ff; font-weight: 700; }
+
+  .feed {
+    background: #0a0e18; border: 1px solid var(--border); border-left: 3px solid var(--saber);
+    border-radius: 8px; padding: 14px 16px; min-height: 118px;
+  }
+  .feed__head { display: flex; align-items: center; gap: 8px; font-size: 12px; letter-spacing: 0.14em; color: var(--crawl); }
+  .feed__dot { width: 8px; height: 8px; border-radius: 50%; background: var(--fg-faint); flex-shrink: 0; }
+  .feed.active .feed__dot { background: var(--saber); box-shadow: 0 0 10px var(--saber); animation: pulse 1s infinite; }
+  .feed__text { color: var(--fg); margin: 10px 0 0; min-height: 1.5em; }
+  .feed__text .caret { display: inline-block; width: 8px; height: 1.05em; background: var(--saber); box-shadow: 0 0 8px var(--saber-glow); vertical-align: text-bottom; animation: blink 1s step-end infinite; }
+  .feed__from { color: var(--saber); font-size: 13px; margin: 10px 0 0; min-height: 1.1em; }
+
+  .controls { display: flex; flex-wrap: wrap; align-items: center; gap: 10px; margin-top: 18px; }
+  .rbtn {
+    font-family: var(--mono); font-size: 13px; padding: 9px 14px; border-radius: 7px;
+    border: 1px solid var(--border-lit); background: var(--bg-panel2); color: var(--fg);
+    cursor: pointer; transition: all .15s;
+  }
+  .rbtn:hover:not(:disabled) { border-color: var(--saber); color: var(--saber); box-shadow: 0 0 16px rgba(255,59,59,0.18); }
+  .rbtn:disabled { opacity: .4; cursor: not-allowed; }
+  .rbtn--power {
+    border-color: var(--saber-glow); color: #ffd7d7;
+    background: linear-gradient(180deg, rgba(255,59,59,0.22), rgba(200,30,30,0.12));
+  }
+  .rbtn[aria-pressed="true"] { border-color: var(--saber); color: var(--saber); box-shadow: 0 0 14px rgba(255,59,59,0.2) inset; }
+  .rbtn.off { opacity: .55; }
+
+  .vol { display: flex; align-items: center; gap: 8px; margin-left: auto; font-size: 11px; letter-spacing: 0.16em; color: var(--fg-faint); }
+  .vol input[type=range] {
+    -webkit-appearance: none; appearance: none; width: 120px; height: 4px; border-radius: 4px;
+    background: linear-gradient(90deg, var(--saber), var(--border-lit)); outline: none;
+  }
+  .vol input[type=range]::-webkit-slider-thumb {
+    -webkit-appearance: none; appearance: none; width: 15px; height: 15px; border-radius: 50%;
+    background: var(--saber); box-shadow: 0 0 10px var(--saber-glow); cursor: pointer;
+  }
+  .vol input[type=range]::-moz-range-thumb {
+    width: 15px; height: 15px; border: 0; border-radius: 50%;
+    background: var(--saber); box-shadow: 0 0 10px var(--saber-glow); cursor: pointer;
+  }
+
+  .console__foot {
+    padding: 11px 18px; border-top: 1px solid var(--border); background: var(--bg-panel2);
+    font-size: 11px; color: var(--fg-faint); letter-spacing: 0.04em;
+  }
+  .console__foot a { color: var(--saber); text-decoration: none; }
+  .console__foot a:hover { text-decoration: underline; }
+
+  /* ---- compact (sidebar) variant ---- */
+  .console--mini { max-width: none; border-radius: 12px; }
+  .console--mini .console__bar { padding: 9px 12px; font-size: 10px; letter-spacing: 0.08em; }
+  .console--mini .t-freq { display: none; }
+  .console--mini .console__body { padding: 13px 13px; }
+  .console--mini .scope { height: 80px; }
+  .console--mini .nowplaying { margin: 11px 2px 9px; gap: 8px; }
+  .console--mini .np__label { display: none; }
+  .console--mini .np__channel { font-size: 13px; }
+  .console--mini .feed { min-height: 92px; padding: 11px 12px; }
+  .console--mini .feed__head { font-size: 11px; }
+  .console--mini .feed__text { font-size: 12.5px; margin-top: 8px; }
+  .console--mini .feed__from { font-size: 12px; margin-top: 8px; }
+  .console--mini .controls { gap: 7px; margin-top: 13px; }
+  .console--mini .rbtn { padding: 7px 9px; font-size: 11.5px; }
+  .console--mini .vol { margin-left: 0; width: 100%; margin-top: 2px; }
+  .console--mini .vol input[type=range] { flex: 1; width: auto; }
+  .console--mini .console__foot { padding: 9px 12px; }
+
+  @media (max-width: 560px) {
+    .vol { margin-left: 0; width: 100%; }
+    .vol input[type=range] { flex: 1; width: auto; }
+  }
+</style>
+
+<script>
+  // ---- Imperial HoloNet Radio: all audio synthesised, all transmissions original ----
+  type Ch = { name: string; root: number; prog: number[][]; bpm: number; texture: string };
+
+  const CHANNELS: Ch[] = [
+    { name: 'CH.01 · Bridge of the Executor', root: 55.00, bpm: 58,  texture: 'drone',
+      prog: [[0,3,7,10],[0,3,7,10],[8,12,15,19],[7,10,14,17]] },
+    { name: 'CH.02 · TIE Patrol',             root: 65.41, bpm: 108, texture: 'arp',
+      prog: [[0,3,7],[1,5,8],[0,3,7],[10,13,17]] },
+    { name: 'CH.03 · Throne Room',            root: 49.00, bpm: 46,  texture: 'pads',
+      prog: [[0,3,7],[8,12,15],[10,14,17],[0,3,7]] },
+    { name: 'CH.04 · Hyperspace Transit',     root: 58.27, bpm: 86,  texture: 'shimmer',
+      prog: [[0,5,10,12],[-2,3,7,10],[0,5,10,12],[5,10,14,17]] },
+    { name: 'CH.05 · March of the Fleet',     root: 41.20, bpm: 100, texture: 'march',
+      prog: [[0,3,7],[0,3,7],[8,12,15],[7,11,14]] },
+  ];
+
+  // Original march motif (semitone offset within bar, step index, length in 16ths).
+  // Deliberately NOT the copyrighted Imperial March theme — an original ominous line.
+  const MARCH_MELODY: { s: number; n: number; d: number }[] = [
+    { s: 0, n: 12, d: 3 }, { s: 3, n: 12, d: 1 }, { s: 4, n: 15, d: 2 },
+    { s: 6, n: 14, d: 2 }, { s: 8, n: 12, d: 2 }, { s: 10, n: 10, d: 2 },
+    { s: 12, n: 8, d: 2 }, { s: 14, n: 7, d: 2 },
+  ];
+
+  const TRANSMISSIONS: { from: string; text: string }[] = [
+    { from: 'Imperial Command', text: 'All stations, this is Imperial Command. The HoloNet is monitored for the security of the Empire. Transmit only on sanctioned frequencies.' },
+    { from: 'Lord Vader', text: 'This is Lord Vader. Your lack of operational security is... disturbing. Rotate your access codes before I arrive.' },
+    { from: 'Lord Vader', text: 'Hold your position. The Emperor does not grant second chances, and neither do I.' },
+    { from: 'Grand Moff Tarkin', text: 'Tarkin to all sector moffs. Fear keeps the systems in line. Let no breach go unanswered.' },
+    { from: 'Grand Admiral Thrawn', text: 'Thrawn, Seventh Fleet. Study the enemy’s patterns and you will know his next move before he makes it.' },
+    { from: 'The Emperor', text: 'The dark side has foreseen our victory. Let the power of the Empire flow through this network.' },
+    { from: 'Imperial Security Bureau', text: 'ISB advisory. Unauthorised intrusions are being traced to their origin. Encrypt, comply, or be silenced.' },
+    { from: 'Death Star Control', text: 'All gunners to stations. Primary ignition sequence standing by. Maintain targeting discipline.' },
+    { from: 'Stormtrooper Command', text: 'Checkpoints report clear. Move along — these are not the datapackets you are looking for.' },
+    { from: 'Fleet Comms', text: 'TIE squadrons, maintain formation. The hyperspace lane is clear for Imperial transit.' },
+    { from: 'Imperial Signals', text: 'Reminder to all officers: default credentials are treason. Patch your systems, for the glory of the Empire.' },
+    { from: 'Moff Command', text: 'Curfew is in effect across the sector. Anomalous traffic will be flagged and purged.' },
+    { from: 'HoloNet Security', text: 'This frequency is encrypted under Imperial decree. Long live the Emperor.' },
+  ];
+
+  const root = document.querySelector<HTMLElement>('.console');
+  if (root) {
+    const q = <T extends HTMLElement>(sel: string) => root.querySelector<T>(sel)!;
+    const ledEl = q('[data-el=led]'), statusEl = q('[data-el=status]'), channelEl = q('[data-el=channel]');
+    const feedEl = q('[data-el=feed]'), feedHead = q('[data-el=feedHead]'), feedText = q('[data-el=feedText]'), feedFrom = q('[data-el=feedFrom]');
+    const powerBtn = q<HTMLButtonElement>('[data-el=power]');
+    const prevBtn = q<HTMLButtonElement>('[data-el=prev]'), nextBtn = q<HTMLButtonElement>('[data-el=next]');
+    const transmitBtn = q<HTMLButtonElement>('[data-el=transmit]'), voiceBtn = q<HTMLButtonElement>('[data-el=voice]');
+    const volume = q<HTMLInputElement>('[data-el=volume]');
+    const scope = q<HTMLCanvasElement>('[data-el=scope]');
+    const sctx = scope.getContext('2d')!;
+
+    let ctx: AudioContext | null = null;
+    let master: GainNode, musicGain: GainNode, sfxGain: GainNode, analyser: AnalyserNode;
+    let delay: DelayNode, delayFb: GainNode;
+    let on = false, voiceOn = true;
+    let chIdx = Math.max(0, Math.min(CHANNELS.length - 1, parseInt(root.dataset.start || '0', 10) || 0));
+    let schedTimer = 0, transTimer = 0, step = 0, bar = 0, nextTime = 0, typeTimer = 0;
+
+    function buildGraph() {
+      ctx = new (window.AudioContext || (window as any).webkitAudioContext)();
+      master = ctx.createGain(); master.gain.value = +volume.value / 100;
+      analyser = ctx.createAnalyser(); analyser.fftSize = 2048;
+      master.connect(analyser); analyser.connect(ctx.destination);
+      musicGain = ctx.createGain(); musicGain.gain.value = 1; musicGain.connect(master);
+      sfxGain = ctx.createGain(); sfxGain.gain.value = 0.9; sfxGain.connect(master);
+      delay = ctx.createDelay(1.0); delay.delayTime.value = 0.34;
+      delayFb = ctx.createGain(); delayFb.gain.value = 0.34;
+      delay.connect(delayFb); delayFb.connect(delay); delay.connect(master);
+    }
+
+    const semi = (r: number, n: number) => r * Math.pow(2, n / 12);
+    function env(g: GainNode, t: number, peak: number, a: number, d: number) {
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(peak, t + a);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + a + d);
+    }
+
+    function pad(freqs: number[], t: number, dur: number) {
+      if (!ctx) return;
+      const filt = ctx.createBiquadFilter(); filt.type = 'lowpass';
+      filt.frequency.setValueAtTime(380, t);
+      filt.frequency.linearRampToValueAtTime(1600, t + dur * 0.4);
+      filt.frequency.linearRampToValueAtTime(420, t + dur);
+      const g = ctx.createGain(); g.gain.value = 0.0001;
+      env(g, t, 0.12, dur * 0.35, dur * 0.65);
+      filt.connect(g); g.connect(musicGain);
+      const send = ctx.createGain(); send.gain.value = 0.25; g.connect(send); send.connect(delay);
+      freqs.forEach((f) => [0, 0.5, -0.5].forEach((det, i) => {
+        const o = ctx!.createOscillator();
+        o.type = i === 0 ? 'sawtooth' : 'triangle';
+        o.frequency.value = f; o.detune.value = det * 8;
+        o.connect(filt); o.start(t); o.stop(t + dur + 0.1);
+      }));
+    }
+
+    function bass(freq: number, t: number, dur: number) {
+      if (!ctx) return;
+      const o = ctx.createOscillator(); o.type = 'triangle'; o.frequency.value = freq;
+      const o2 = ctx.createOscillator(); o2.type = 'sine'; o2.frequency.value = freq / 2;
+      const g = ctx.createGain(); env(g, t, 0.22, 0.08, dur);
+      o.connect(g); o2.connect(g); g.connect(musicGain);
+      o.start(t); o.stop(t + dur + 0.1); o2.start(t); o2.stop(t + dur + 0.1);
+    }
+
+    function pluck(freq: number, t: number, dur: number, peak = 0.14) {
+      if (!ctx) return;
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = freq;
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 2400;
+      const g = ctx.createGain(); env(g, t, peak, 0.005, dur);
+      o.connect(f); f.connect(g); g.connect(musicGain);
+      const send = ctx.createGain(); send.gain.value = 0.3; g.connect(send); send.connect(delay);
+      o.start(t); o.stop(t + dur + 0.05);
+    }
+
+    function bell(freq: number, t: number) {
+      if (!ctx) return;
+      const o = ctx.createOscillator(); o.type = 'sine'; o.frequency.value = freq;
+      const g = ctx.createGain(); env(g, t, 0.1, 0.01, 1.6);
+      o.connect(g); g.connect(musicGain);
+      const send = ctx.createGain(); send.gain.value = 0.5; g.connect(send); send.connect(delay);
+      o.start(t); o.stop(t + 1.8);
+    }
+
+    function noise(dur: number) {
+      const buf = ctx!.createBuffer(1, Math.max(1, (ctx!.sampleRate * dur) | 0), ctx!.sampleRate);
+      const d = buf.getChannelData(0);
+      for (let i = 0; i < d.length; i++) d[i] = Math.random() * 2 - 1;
+      const src = ctx!.createBufferSource(); src.buffer = buf; return src;
+    }
+
+    function kick(t: number) {
+      if (!ctx) return;
+      const o = ctx.createOscillator(); o.type = 'sine';
+      o.frequency.setValueAtTime(140, t); o.frequency.exponentialRampToValueAtTime(42, t + 0.14);
+      const g = ctx.createGain(); env(g, t, 0.5, 0.002, 0.2);
+      o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + 0.25);
+    }
+
+    function hat(t: number) {
+      if (!ctx) return;
+      const src = noise(0.05);
+      const f = ctx.createBiquadFilter(); f.type = 'highpass'; f.frequency.value = 7000;
+      const g = ctx.createGain(); env(g, t, 0.06, 0.002, 0.04);
+      src.connect(f); f.connect(g); g.connect(musicGain); src.start(t); src.stop(t + 0.06);
+    }
+
+    function sweep(t: number) {
+      if (!ctx) return;
+      const src = noise(2.2);
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.Q.value = 3;
+      f.frequency.setValueAtTime(300, t); f.frequency.exponentialRampToValueAtTime(5000, t + 2.0);
+      const g = ctx.createGain(); env(g, t, 0.07, 0.8, 1.4);
+      src.connect(f); f.connect(g); g.connect(musicGain);
+      const send = ctx.createGain(); send.gain.value = 0.5; g.connect(send); send.connect(delay);
+      src.start(t); src.stop(t + 2.2);
+    }
+
+    // ---- march-specific voices ----
+    function brass(freqs: number[], t: number, dur: number) {
+      if (!ctx) return;
+      const filt = ctx.createBiquadFilter(); filt.type = 'lowpass';
+      filt.frequency.setValueAtTime(1100, t);
+      filt.frequency.linearRampToValueAtTime(2600, t + 0.05);
+      filt.frequency.linearRampToValueAtTime(900, t + dur);
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.17, t + 0.02);
+      g.gain.setValueAtTime(0.17, t + dur * 0.55);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      filt.connect(g); g.connect(musicGain);
+      const send = ctx.createGain(); send.gain.value = 0.18; g.connect(send); send.connect(delay);
+      freqs.forEach((f) => [0, 0.7].forEach((det) => {
+        const o = ctx!.createOscillator(); o.type = 'sawtooth';
+        o.frequency.value = f; o.detune.value = det * 7;
+        o.connect(filt); o.start(t); o.stop(t + dur + 0.05);
+      }));
+    }
+
+    function snare(t: number) {
+      if (!ctx) return;
+      const src = noise(0.2);
+      const bp = ctx.createBiquadFilter(); bp.type = 'bandpass'; bp.frequency.value = 1900; bp.Q.value = 0.7;
+      const hp = ctx.createBiquadFilter(); hp.type = 'highpass'; hp.frequency.value = 1200;
+      const g = ctx.createGain(); env(g, t, 0.18, 0.002, 0.16);
+      src.connect(bp); bp.connect(hp); hp.connect(g); g.connect(musicGain);
+      src.start(t); src.stop(t + 0.22);
+    }
+
+    function timp(t: number, freq: number) {
+      if (!ctx) return;
+      const o = ctx.createOscillator(); o.type = 'sine';
+      o.frequency.setValueAtTime(freq * 1.6, t); o.frequency.exponentialRampToValueAtTime(freq, t + 0.12);
+      const g = ctx.createGain(); env(g, t, 0.42, 0.004, 0.5);
+      o.connect(g); g.connect(musicGain); o.start(t); o.stop(t + 0.6);
+    }
+
+    function lead(freq: number, t: number, dur: number) {
+      if (!ctx) return;
+      const o = ctx.createOscillator(); o.type = 'sawtooth'; o.frequency.value = freq;
+      const o2 = ctx.createOscillator(); o2.type = 'square'; o2.frequency.value = freq;
+      const lfo = ctx.createOscillator(); lfo.frequency.value = 5.5;
+      const lg = ctx.createGain(); lg.gain.value = freq * 0.006;
+      lfo.connect(lg); lg.connect(o.frequency); lg.connect(o2.frequency);
+      lfo.start(t); lfo.stop(t + dur + 0.05);
+      const f = ctx.createBiquadFilter(); f.type = 'lowpass'; f.frequency.value = 3200;
+      const g = ctx.createGain();
+      g.gain.setValueAtTime(0.0001, t);
+      g.gain.exponentialRampToValueAtTime(0.15, t + 0.03);
+      g.gain.setValueAtTime(0.15, t + dur * 0.6);
+      g.gain.exponentialRampToValueAtTime(0.0001, t + dur);
+      o.connect(f); o2.connect(f); f.connect(g); g.connect(musicGain);
+      const send = ctx.createGain(); send.gain.value = 0.25; g.connect(send); send.connect(delay);
+      o.start(t); o.stop(t + dur + 0.05); o2.start(t); o2.stop(t + dur + 0.05);
+    }
+
+    function scheduleStep(s: number, t: number) {
+      const ch = CHANNELS[chIdx];
+      const chord = ch.prog[bar % ch.prog.length];
+      const sixteenth = (60 / ch.bpm) / 4;
+
+      if (ch.texture === 'march') {
+        if (s % 4 === 0) {
+          brass(chord.map((n) => semi(ch.root, n + 12)), t, sixteenth * 2.4);
+          bass(semi(ch.root, chord[0]), t, sixteenth * 3.6);
+          timp(t, semi(ch.root, chord[0]));
+        }
+        if (s === 4 || s === 12) snare(t);
+        if (s % 2 === 0) hat(t);
+        const m = MARCH_MELODY.find((x) => x.s === s);
+        if (m) lead(semi(ch.root, chord[0] + m.n), t, sixteenth * m.d * 0.95);
+        return;
+      }
+
+      if (s === 0) {
+        pad(chord.map((n) => semi(ch.root, n + 12)), t, sixteenth * 16);
+        bass(semi(ch.root, chord[0]), t, sixteenth * 16);
+        if (ch.texture === 'drone' && bar % 4 === 2) bell(semi(ch.root, chord[0] + 24), t);
+        if (ch.texture === 'shimmer') sweep(t);
+      }
+      if (ch.texture === 'arp') {
+        pluck(semi(ch.root, chord[s % chord.length] + 24), t, sixteenth * 1.6, 0.12);
+        if (s % 8 === 0) kick(t);
+        if (s % 2 === 1) hat(t);
+      }
+      if (ch.texture === 'pads' && s === 8) bell(semi(ch.root, chord[chord.length - 1] + 24), t);
+      if (ch.texture === 'shimmer' && s % 4 === 0) {
+        pluck(semi(ch.root, chord[(s / 4) % chord.length] + 36), t, sixteenth * 3, 0.08);
+        if (s % 8 === 4) hat(t);
+      }
+    }
+
+    function scheduler() {
+      if (!ctx) return;
+      const sixteenth = (60 / CHANNELS[chIdx].bpm) / 4;
+      while (nextTime < ctx.currentTime + 0.13) {
+        scheduleStep(step, nextTime);
+        nextTime += sixteenth;
+        step = (step + 1) % 16;
+        if (step === 0) bar++;
+      }
+    }
+
+    function staticBurst(t: number, dur: number, peak: number) {
+      if (!ctx) return;
+      const src = noise(dur);
+      const f = ctx.createBiquadFilter(); f.type = 'bandpass'; f.frequency.value = 1800; f.Q.value = 0.8;
+      const g = ctx.createGain(); env(g, t, peak, 0.01, dur);
+      src.connect(f); f.connect(g); g.connect(sfxGain); src.start(t); src.stop(t + dur + 0.05);
+    }
+
+    function speak(text: string) {
+      if (!voiceOn || !('speechSynthesis' in window)) return;
+      try {
+        window.speechSynthesis.cancel();
+        const u = new SpeechSynthesisUtterance(text);
+        u.pitch = 0.4; u.rate = 0.92; u.volume = Math.min(1, +volume.value / 100 + 0.25);
+        const vs = window.speechSynthesis.getVoices();
+        const pref = vs.find((v) => /United Kingdom|UK|British|Daniel|Arthur|George/i.test(v.name))
+          || vs.find((v) => /en[-_]GB/i.test(v.lang)) || vs.find((v) => /^en/i.test(v.lang));
+        if (pref) u.voice = pref;
+        window.speechSynthesis.speak(u);
+      } catch { /* speech unavailable — text still shows */ }
+    }
+
+    function typeOut(el: HTMLElement, text: string, done?: () => void) {
+      clearInterval(typeTimer);
+      el.textContent = '';
+      const caret = document.createElement('span'); caret.className = 'caret';
+      el.appendChild(caret);
+      let i = 0;
+      typeTimer = window.setInterval(() => {
+        if (i >= text.length) { clearInterval(typeTimer); caret.remove(); done && done(); return; }
+        caret.insertAdjacentText('beforebegin', text[i++]);
+      }, 28);
+    }
+
+    let lastTrans = -1;
+    function transmit() {
+      if (!ctx) return;
+      let idx = Math.floor(Math.random() * TRANSMISSIONS.length);
+      if (idx === lastTrans) idx = (idx + 1) % TRANSMISSIONS.length;
+      lastTrans = idx;
+      const msg = TRANSMISSIONS[idx];
+      const t = ctx.currentTime;
+      musicGain.gain.cancelScheduledValues(t);
+      musicGain.gain.setTargetAtTime(0.22, t, 0.15);
+      staticBurst(t, 0.5, 0.12);
+      feedEl.classList.add('active');
+      feedHead.textContent = '▶ INCOMING TRANSMISSION';
+      feedFrom.textContent = '';
+      typeOut(feedText, msg.text, () => {
+        feedFrom.textContent = '— ' + msg.from;
+        musicGain.gain.setTargetAtTime(1, ctx!.currentTime + 0.4, 0.6);
+        staticBurst(ctx!.currentTime, 0.3, 0.08);
+        feedEl.classList.remove('active');
+        feedHead.textContent = '▶ ' + CHANNELS[chIdx].name.split('·')[1].trim().toUpperCase();
+      });
+      setTimeout(() => speak(msg.text), 420);
+    }
+
+    function scheduleNextTransmission() {
+      clearTimeout(transTimer);
+      transTimer = window.setTimeout(() => { if (on) { transmit(); scheduleNextTransmission(); } }, 16000 + Math.random() * 16000);
+    }
+
+    function setChannel(i: number) {
+      chIdx = (i + CHANNELS.length) % CHANNELS.length;
+      channelEl.textContent = CHANNELS[chIdx].name;
+      feedHead.textContent = '▶ ' + CHANNELS[chIdx].name.split('·')[1].trim().toUpperCase();
+      step = 0; bar = 0;
+      if (ctx) nextTime = ctx.currentTime + 0.1;
+    }
+
+    function powerOn() {
+      if (!ctx) buildGraph();
+      if (ctx!.state === 'suspended') ctx!.resume();
+      on = true;
+      ledEl.classList.add('on');
+      statusEl.textContent = 'LIVE'; statusEl.classList.add('live');
+      powerBtn.setAttribute('aria-pressed', 'true');
+      [prevBtn, nextBtn, transmitBtn].forEach((b) => (b.disabled = false));
+      setChannel(chIdx);
+      feedText.textContent = 'Frequency open. Receiving Imperial broadcast…';
+      feedFrom.textContent = '';
+      nextTime = ctx!.currentTime + 0.1;
+      clearInterval(schedTimer); schedTimer = window.setInterval(scheduler, 25);
+      scheduleNextTransmission();
+      if ('speechSynthesis' in window) window.speechSynthesis.getVoices();
+    }
+
+    function powerOff() {
+      on = false;
+      ledEl.classList.remove('on');
+      statusEl.textContent = 'OFFLINE'; statusEl.classList.remove('live');
+      powerBtn.setAttribute('aria-pressed', 'false');
+      [prevBtn, nextBtn, transmitBtn].forEach((b) => (b.disabled = true));
+      clearInterval(schedTimer); clearTimeout(transTimer); clearInterval(typeTimer);
+      if ('speechSynthesis' in window) window.speechSynthesis.cancel();
+      feedEl.classList.remove('active');
+      feedHead.textContent = '▶ CHANNEL SILENT';
+      feedText.textContent = 'Frequency closed.';
+      feedFrom.textContent = '';
+      channelEl.textContent = '— standby —';
+      if (ctx) ctx.suspend();
+    }
+
+    powerBtn.addEventListener('click', () => (on ? powerOff() : powerOn()));
+    prevBtn.addEventListener('click', () => on && setChannel(chIdx - 1));
+    nextBtn.addEventListener('click', () => on && setChannel(chIdx + 1));
+    transmitBtn.addEventListener('click', () => on && transmit());
+    voiceBtn.addEventListener('click', () => {
+      voiceOn = !voiceOn;
+      voiceBtn.setAttribute('aria-pressed', String(voiceOn));
+      voiceBtn.textContent = voiceOn ? '🔊 VOICE' : '🔇 VOICE';
+      voiceBtn.classList.toggle('off', !voiceOn);
+      if (!voiceOn && 'speechSynthesis' in window) window.speechSynthesis.cancel();
+    });
+    volume.addEventListener('input', () => { if (master) master.gain.value = +volume.value / 100; });
+
+    // seed the channel label before power-on
+    channelEl.textContent = '— standby —';
+
+    // ---- oscilloscope ----
+    const buf = new Uint8Array(2048);
+    function draw() {
+      requestAnimationFrame(draw);
+      const w = scope.width, h = scope.height;
+      sctx.fillStyle = '#0a0e18'; sctx.fillRect(0, 0, w, h);
+      sctx.strokeStyle = 'rgba(255,59,59,0.08)'; sctx.lineWidth = 1;
+      for (let x = 0; x < w; x += 41) { sctx.beginPath(); sctx.moveTo(x, 0); sctx.lineTo(x, h); sctx.stroke(); }
+      sctx.beginPath(); sctx.moveTo(0, h / 2); sctx.lineTo(w, h / 2); sctx.stroke();
+      sctx.lineWidth = 2; sctx.strokeStyle = '#ff3b3b'; sctx.shadowColor = '#ff3b3b'; sctx.shadowBlur = 8;
+      sctx.beginPath();
+      if (on && analyser) {
+        analyser.getByteTimeDomainData(buf);
+        for (let i = 0; i < buf.length; i++) {
+          const x = (i / buf.length) * w, y = (buf[i] / 255) * h;
+          i === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
+        }
+      } else {
+        const tt = Date.now() / 600;
+        for (let x = 0; x < w; x++) {
+          const y = h / 2 + Math.sin(x / 55 + tt) * 1.5 + (Math.random() - 0.5) * 1.2;
+          x === 0 ? sctx.moveTo(x, y) : sctx.lineTo(x, y);
+        }
+      }
+      sctx.stroke(); sctx.shadowBlur = 0;
+    }
+    draw();
+  }
+</script>

@@ -1,6 +1,6 @@
 ---
 title: "AI jailbreaking: talking an aligned model out of its guardrails"
-date: 2026-10-28
+date: 2026-10-28T13:30:00
 tags: ["ai", "llm", "red-team", "prompt-injection", "appsec", "methodology"]
 summary: "The jailbreak pipeline — recon, craft, deliver, bypass — the technique families behind it, and the defence-in-depth that actually breaks the chain. Defender-first, sanitised PoCs."
 ---

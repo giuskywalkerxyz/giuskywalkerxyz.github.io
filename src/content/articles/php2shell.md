@@ -1,6 +1,6 @@
 ---
 title: "php2shell: turning a PHP foothold into an interactive shell"
-date: 2026-10-28
+date: 2026-10-28T11:00:00
 tags: ["web", "php", "rce", "post-exploitation", "methodology"]
 summary: "How a PHP code-execution primitive becomes a stable interactive shell — the pipeline, the common primitives, and, more importantly, how to shut each one down."
 ---

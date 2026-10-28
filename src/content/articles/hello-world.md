@@ -1,6 +1,6 @@
 ---
 title: "Boot sequence: why this holocron exists"
-date: 2026-10-28
+date: 2026-10-28T09:00:00
 tags: ["meta", "methodology"]
 summary: "What this blog is, what goes here, and the one rule I never break: no spoilers for active boxes."
 ---

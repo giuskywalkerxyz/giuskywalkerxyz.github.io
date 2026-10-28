@@ -16,8 +16,8 @@ const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
     <p class="muted" style="max-width:66ch;">
       End-to-end writeups of boxes I've owned. <strong>Retired</strong> machines are open.
       <strong>Active-season</strong> machines are 🔒 <strong>sealed</strong>: the full writeup is
-      AES-encrypted and the password is the machine's <strong>root flag</strong> — per HTB policy,
-      only operatives who've already rooted the box can read the chain.
+      AES-256-GCM encrypted and <strong>password-protected</strong> — the attack chain on a live box
+      is the spoiler, so it isn't published in the open.
     </p>
   </section>
 

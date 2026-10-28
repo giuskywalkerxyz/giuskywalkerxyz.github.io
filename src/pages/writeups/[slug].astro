@@ -54,17 +54,17 @@ if (kind === 'public') {
           </div>
 
           <div class="gate__notice">
-            <strong>⚠ HTB disclosure policy</strong>
+            <strong>⚠ Active machine</strong>
             <p>
-              Per HackTheBox rules, solutions for active machines may only be published
-              password-protected, with the password set to the machine's <strong>root flag</strong>.
-              Only those who have already rooted the box can unlock this.
+              This box is still active on HackTheBox, so the full solution isn't published in the
+              open — the chain itself is the spoiler. Access is <strong>password-protected</strong>;
+              if you need it, reach out.
             </p>
           </div>
 
           <form id="gate-form" class="gate__form" autocomplete="off">
-            <label for="pw">Root flag</label>
-            <input id="pw" type="password" placeholder="HTB{…}" autocomplete="off" spellcheck="false" />
+            <label for="pw">Password</label>
+            <input id="pw" type="password" placeholder="enter password" autocomplete="off" spellcheck="false" />
             <button type="submit" class="btn btn--saber" style="width:100%;justify-content:center;">🔓 Unlock Report</button>
             <p id="gate-err" class="gate__err" role="alert"></p>
           </form>
@@ -110,7 +110,7 @@ if (kind === 'public') {
                 out.style.display = 'block';
                 out.scrollIntoView({ behavior: 'smooth' });
               } catch (err) {
-                errEl.textContent = '✗ Wrong flag — decryption failed.';
+                errEl.textContent = '✗ Wrong password — decryption failed.';
                 input.value = '';
                 input.focus();
               }

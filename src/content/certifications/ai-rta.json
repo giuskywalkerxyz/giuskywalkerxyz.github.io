@@ -1,0 +1,19 @@
+{
+  "code": "AI-RTA",
+  "name": "Certified AI Red Team Analyst",
+  "issuer": "CyberWarFare Labs",
+  "track": "AI Red Team",
+  "order": 0,
+  "skills": [
+    "prompt injection",
+    "indirect prompt injection",
+    "rag poisoning",
+    "mcp exploitation",
+    "llm tool / function-call abuse",
+    "ssrf via ai agents"
+  ],
+  "summary": "AI-native offense end to end: abusing an LLM copilot's MCP tools, poisoning a RAG knowledge base to drive an agent-only SSRF, pivoting through leaked config into an internal autonomous agent fleet, and talking a guardrailed agent out of the final flag.",
+  "issued": "2026-10",
+  "credentialId": "6ae2a5797bd2ad906549c8b4",
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/6ae2a5797bd2ad906549c8b4"
+}

@@ -1,0 +1,20 @@
+{
+  "code": "API-RTA",
+  "name": "Certified API Red Team Analyst",
+  "issuer": "CyberWarFare Labs",
+  "track": "API Red Team",
+  "order": 0,
+  "skills": [
+    "api security (owasp api top 10)",
+    "bola / idor",
+    "bfla / privilege escalation",
+    "jwt attacks",
+    "ssrf",
+    "sql injection",
+    "aws (lambda / s3) exploitation"
+  ],
+  "summary": "API offense end to end: a JWKS-leaked HS256 secret into token forging (BOLA + BFLA), client-trusted pricing, a self-debugging Lambda, SSRF-into-S3 object read, and UNION SQLi — the OWASP API Top 10, live.",
+  "issued": "2026-10",
+  "credentialId": "6ae2b389f88c7cc4d402da3b",
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/6ae2b389f88c7cc4d402da3b"
+}

@@ -1,0 +1,52 @@
+---
+import Base from '../../layouts/Base.astro';
+import { getCollection, render } from 'astro:content';
+
+export async function getStaticPaths() {
+  const entries = await getCollection('ai', (e) => !e.data.draft);
+  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
+}
+
+const { entry } = Astro.props;
+const { Content } = await render(entry);
+const d = entry.data;
+const sevClass = `badge badge--${d.severity.toLowerCase()}`;
+---
+<Base title={`${d.title} — AI writeup`} active="ai" description={d.summary}>
+  <article class="article">
+    <div class="article__head">
+      <p class="article__kicker">// {d.platform} · {d.track} · {d.level}</p>
+      <h1>{d.title}</h1>
+      <div class="article__meta">
+        <span class={sevClass}>{d.severity}</span>
+        <span class="badge">{d.track}</span>
+        {d.flag && <span class="badge badge--pts">{d.flag}</span>}
+        <span class="tag" style="margin-left:4px;">{d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+      </div>
+    </div>
+
+    <div class="prose">
+      <table>
+        <tbody>
+          <tr><td><strong>Target</strong></td><td>{d.platform} · {d.track} track · {d.level}</td></tr>
+          <tr><td><strong>Vulnerability</strong></td><td>{d.vuln}</td></tr>
+          {d.owasp.length > 0 && <tr><td><strong>OWASP LLM Top 10</strong></td><td>{d.owasp.join(' · ')}</td></tr>}
+          {d.atlas.length > 0 && <tr><td><strong>MITRE ATLAS</strong></td><td>{d.atlas.join(' · ')}</td></tr>}
+          {d.flag && <tr><td><strong>Flag</strong></td><td><code>{d.flag}</code></td></tr>}
+        </tbody>
+      </table>
+
+      {d.image && (
+        <figure style="margin:20px 0;">
+          <img src={d.image} alt={`${d.title} — solved`} loading="lazy" style="width:100%;border:1px solid var(--line, #333);border-radius:6px;" />
+          <figcaption class="muted" style="font-size:0.85em;margin-top:6px;">{d.level} — solved ({d.flag})</figcaption>
+        </figure>
+      )}
+
+      <Content />
+    </div>
+
+    <hr class="prose" style="margin-top:40px;" />
+    <p class="muted"><a class="saber" href="/ai/">⟵ back to all AI writeups</a></p>
+  </article>
+</Base>

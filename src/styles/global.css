@@ -255,6 +255,9 @@ body {
 .badge--hard   { color: var(--red); border-color: rgba(255,93,93,0.4); }
 .badge--insane { color: #ff8bd0; border-color: rgba(255,139,208,0.4); }
 .badge--pts    { color: var(--saber); border-color: rgba(255,59,59,0.4); }
+.badge--critical { color: var(--red); border-color: rgba(255,93,93,0.5); }
+.badge--high     { color: var(--crawl); border-color: rgba(255,176,32,0.45); }
+.badge--low      { color: var(--green); border-color: rgba(126,231,135,0.4); }
 
 .tag { color: var(--fg-faint); font-size: 12px; }
 .tag::before { content: "#"; color: var(--saber-glow); }

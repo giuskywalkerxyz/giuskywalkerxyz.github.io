@@ -9,11 +9,16 @@ const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).ma
 const writeups = [...pub, ...prot].sort(byDateDesc);
 const articles = (await getCollection('articles', (e) => !e.data.draft))
   .sort(byDateDesc);
+const aiWriteups = (await getCollection('ai', (e) => !e.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order
+);
 
 const latestWriteups = writeups.slice(0, 4);
 const latestArticles = articles.slice(0, 3);
+const latestAi = aiWriteups.slice(0, 4);
 
 const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
+const sevClass = (sv: string) => `badge badge--${sv.toLowerCase()}`;
 ---
 <Base title="giuskywalker.sh — hacker's holocron" active="home">
   <section class="hero">
@@ -92,6 +97,29 @@ const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
     </div>
     <p style="margin-top:16px;"><a class="btn" href="/writeups/">all writeups ⟶</a></p>
   </section>
+
+  {latestAi.length > 0 && (
+    <section class="section">
+      <h2 class="section__h">ai / llm writeups</h2>
+      <div class="cards">
+        {latestAi.map((w) => (
+          <a class="card" href={`/ai/${w.id}/`}>
+            <div class="card__top">
+              <span class="card__title">{w.data.title.replace(/^Arkx — /, '')}</span>
+              <span class={sevClass(w.data.severity)}>{w.data.severity}</span>
+            </div>
+            <p class="card__summary">{w.data.summary}</p>
+            <div class="card__meta">
+              <span>{w.data.platform}</span><span>·</span>
+              <span>{w.data.track}</span><span>·</span>
+              <span>{w.data.vuln}</span>
+            </div>
+          </a>
+        ))}
+      </div>
+      <p style="margin-top:16px;"><a class="btn" href="/ai/">all ai writeups ⟶</a></p>
+    </section>
+  )}
 
   {latestArticles.length > 0 && (
     <section class="section">

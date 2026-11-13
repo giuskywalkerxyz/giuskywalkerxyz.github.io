@@ -47,6 +47,29 @@ const protectedWriteups = defineCollection({
   }),
 });
 
+// AI / LLM security CTF writeups (agent exploitation) — separate from HTB boxes.
+const ai = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/ai' }),
+  schema: z.object({
+    title: z.string(),
+    platform: z.string().default('Arkx'),
+    track: z.string(),            // Advanced | Expert | ...
+    level: z.string(),            // e.g. "Level 7"
+    vuln: z.string(),             // vulnerability class
+    severity: z.enum(['Low', 'Medium', 'High', 'Critical']),
+    flag: z.string().optional(),
+    owasp: z.array(z.string()).default([]),
+    atlas: z.array(z.string()).default([]),
+    image: z.string().optional(),
+    order: z.number().default(99),
+    date: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+    summary: z.string(),
+    repo: z.string().url().optional(),
+    draft: z.boolean().default(false),
+  }),
+});
+
 const articles = defineCollection({
   loader: glob({ pattern: '**/*.md', base: './src/content/articles' }),
   schema: z.object({
@@ -76,4 +99,4 @@ const certifications = defineCollection({
   }),
 });
 
-export const collections = { writeups, protectedWriteups, articles, certifications };
+export const collections = { writeups, protectedWriteups, articles, certifications, ai };

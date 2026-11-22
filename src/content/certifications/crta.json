@@ -13,5 +13,6 @@
   "summary": "Red team fundamentals in an enterprise lab: initial access, credential abuse and moving laterally from the perimeter to domain compromise.",
   "issued": "2026-04",
   "credentialId": "69d02ae5f365a736981f12e1",
-  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/69d02ae5f365a736981f12e1"
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/69d02ae5f365a736981f12e1",
+  "summaryPt": "Fundamentos de red team em laboratório corporativo: acesso inicial, abuso de credenciais e movimentação lateral do perímetro até o comprometimento do domínio."
 }

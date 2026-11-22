@@ -14,5 +14,6 @@
   "summary": "Deep Active Directory tradecraft: Kerberos abuse, delegation, ACL attack paths, cross-trust movement and domain persistence.",
   "issued": "2026-02",
   "credentialId": "699f715e40af551f800ad3d7",
-  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/699f715e40af551f800ad3d7"
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/699f715e40af551f800ad3d7",
+  "summaryPt": "Técnicas avançadas de Active Directory: abuso de Kerberos, delegação, caminhos de ataque via ACL, movimentação entre trusts e persistência no domínio."
 }

@@ -14,5 +14,6 @@
   "summary": "Offensive operations across AWS, Azure and GCP: enumeration, IAM misconfiguration abuse and pivoting between cloud services.",
   "issued": "2026-03",
   "credentialId": "69b26fe13b8b3cefb244704d",
-  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/69b26fe13b8b3cefb244704d"
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/69b26fe13b8b3cefb244704d",
+  "summaryPt": "Operações ofensivas em AWS, Azure e GCP: enumeração, abuso de configurações incorretas de IAM e pivô entre serviços de nuvem."
 }

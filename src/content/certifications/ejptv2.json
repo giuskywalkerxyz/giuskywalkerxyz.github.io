@@ -14,5 +14,6 @@
   "summary": "Hands-on practical exam covering the full junior pentest loop: assessment methodology, host and network auditing, web app basics and post-exploitation.",
   "issued": "2026-02",
   "credentialId": "175078428",
-  "verifyUrl": "https://certs.ine.com/468dd1fa-8b36-4561-85ae-63dabab9e8af"
+  "verifyUrl": "https://certs.ine.com/468dd1fa-8b36-4561-85ae-63dabab9e8af",
+  "summaryPt": "Prova prática cobrindo o ciclo completo de pentest júnior: metodologia, auditoria de hosts e redes, fundamentos de aplicações web e pós-exploração."
 }

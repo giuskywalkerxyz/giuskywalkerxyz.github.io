@@ -1,0 +1,287 @@
+---
+import Base from '../layouts/Base.astro';
+import AttackGraph from '../components/AttackGraph.astro';
+import Cta from '../components/Cta.astro';
+import { getCollection } from 'astro:content';
+import { byDateDesc } from '../lib/sortByDate';
+import { bookingHref } from '../site';
+import { fmtDate, langOf, lp, useT } from '../i18n';
+
+const lang = langOf(Astro.url.pathname);
+const t = useT(lang);
+const pt = lang === 'pt';
+
+const pub = (await getCollection('writeups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: false }));
+const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: true }));
+const writeups = [...pub, ...prot].sort(byDateDesc);
+const ai = (await getCollection('ai', (e) => !e.data.draft)).sort(byDateDesc);
+const articles = (await getCollection('articles', (e) => !e.data.draft)).sort(byDateDesc);
+const cves = (await getCollection('cves', (e) => !e.data.draft)).sort(byDateDesc);
+const certs = (await getCollection('certifications', (c) => c.data.status === 'earned')).sort(
+  (a, b) => a.data.order - b.data.order
+);
+
+const c = pt
+  ? {
+      roles: ['Pentest', 'Red team', 'Segurança ofensiva', 'Pesquisa de vulnerabilidades'],
+      h1: 'Eu invado, <em>para que outros não consigam.</em>',
+      lede: 'Sou Giulliano Amaral, pentester e pesquisador de segurança. Encontro os caminhos que um atacante usaria nas suas aplicações, redes e sistemas de IA, e documento cada um com clareza para que o seu time consiga fechá-los.',
+      read: 'ou leia os writeups',
+      foot: 'Web · APIs · Active Directory · IA/LLM · Pesquisa em software open source',
+      foot2: '// adversário autorizado',
+      stats: ['certificações ofensivas', 'writeups de máquinas', 'labs de red team em IA', 'artigos de pesquisa'],
+      glance: 'Em números',
+      whyK: './why --pentest',
+      punchH: 'Por que contratar <em>um pentest?</em>',
+      punchP: 'Porque alguém vai testar a segurança da sua empresa. A única pergunta é se vai ser alguém contratado por você, ou um atacante.',
+      whyH: 'O custo de <em>descobrir tarde</em>',
+      whyP: 'A maioria das invasões não depende de técnicas sofisticadas. Elas começam por uma falha conhecida que ninguém testou, num sistema exposto ou num fornecedor. Os números mais recentes do mercado mostram o tamanho do problema:',
+      why: [
+        { n: 'US$ 4,99 mi', l: 'é o custo médio de um vazamento de dados, um recorde e 12% a mais que no ano anterior.', src: 'IBM, Cost of a Data Breach 2026', href: 'https://www.ibm.com/reports/data-breach' },
+        { n: '31%', l: 'dos vazamentos começaram pela exploração de uma vulnerabilidade, hoje a principal porta de entrada dos atacantes.', src: 'Verizon, DBIR 2026', href: 'https://www.verizon.com/business/resources/reports/dbir/' },
+        { n: '43 dias', l: 'é o tempo mediano para corrigir uma falha crítica já explorada na prática. Só 26% delas foram corrigidas por completo.', src: 'Verizon, DBIR 2026', href: 'https://www.verizon.com/business/resources/reports/dbir/' },
+        { n: '48%', l: 'dos vazamentos envolveram ransomware, e outros 48% envolveram um fornecedor ou parceiro.', src: 'Verizon, DBIR 2026', href: 'https://www.verizon.com/business/resources/reports/dbir/' },
+      ],
+      howH: 'Onde o pentest entra',
+      how: [
+        { t: 'Encontrar a porta antes do atacante', d: 'Se a exploração de falhas é o principal vetor de entrada, a defesa mais direta é procurá-las como um atacante faria, com testes manuais em aplicações, APIs e rede.' },
+        { t: 'Saber o que corrigir primeiro', d: 'Times corrigem devagar porque têm falhas demais. O relatório classifica cada achado por impacto real e explorabilidade, para o esforço ir para o que de fato abre a porta.' },
+        { t: 'Ter evidência para clientes e auditoria', d: 'Um relatório independente responde questionários de segurança de clientes e apoia auditorias como ISO 27001 e SOC 2, além de demonstrar diligência perante a LGPD, cujas multas chegam a 2% do faturamento, limitadas a R$ 50 milhões por infração.' },
+      ],
+      svcH: 'O que eu <em>testo</em>',
+      svcP: 'Todo projeto é manual, com escopo por escrito, e termina com um relatório que o seu time de desenvolvimento consegue usar: passos reproduzíveis, impacto e correções.',
+      svcBtn: 'Como funciona um projeto',
+      services: [
+        { t: 'Pentest web e de APIs', d: 'Testes manuais de aplicações web e APIs, além do que os scanners apontam: controle de acesso, lógica de negócio e a forma como os componentes se encadeiam.', i: ['OWASP Top 10 / API Top 10', 'Autenticação, autorização e IDOR', 'Abuso de lógica de negócio'] },
+        { t: 'Rede interna e Active Directory', d: 'Avaliações em modelo assume-breach que partem de um ponto de apoio e mapeiam o caminho realista até o comprometimento do domínio.', i: ['Caminhos de ataque no AD', 'Abuso de credenciais e Kerberos', 'Movimentação lateral'] },
+        { t: 'Red team de IA / LLM', d: 'Testes adversariais de aplicações com LLM e agentes: prompt injection, abuso de ferramentas e fronteiras de confiança entre agentes.', i: ['OWASP LLM Top 10', 'Abuso de agentes e ferramentas MCP', 'Caminhos de exfiltração de dados'] },
+      ],
+      cveH: 'Vulnerabilidades <em>divulgadas</em>',
+      cveBtn: 'Todas as divulgações',
+      wuH: '<em>Writeups</em> recentes',
+      wuP: 'Cadeias de ataque completas de máquinas do HackTheBox e de labs de red team em IA. Máquinas ativas ficam seladas até serem aposentadas.',
+      wuBtn: 'Todos os writeups',
+      sealed: 'selado',
+      retired: 'aposentada',
+      artH: 'Pesquisa e <em>artigos</em>',
+      artBtn: 'Todos os artigos',
+      certH: 'Certificações',
+      certP: 'Provas práticas em laboratório cobrindo pentest, red team, Active Directory, web, APIs e segurança de IA.',
+      certBtn: 'Detalhes',
+    }
+  : {
+      roles: ['Pentest', 'Red team', 'Offensive security', 'Vuln research'],
+      h1: "I break in, <em>so others can't.</em>",
+      lede: "I'm Giulliano Amaral, a penetration tester and security researcher. I find the paths an attacker would take through your applications, networks and AI systems, then document them clearly enough for your team to close them.",
+      read: 'or read the writeups',
+      foot: 'Web · APIs · Active Directory · AI/LLM · OSS vulnerability research',
+      foot2: '// authorized adversary',
+      stats: ['offensive certifications', 'machine writeups', 'AI red-team labs solved', 'research articles'],
+      glance: 'At a glance',
+      whyK: './why --pentest',
+      punchH: 'Why hire <em>a pentest?</em>',
+      punchP: "Because someone is going to test your company's security. The only question is whether it's someone you hired, or an attacker.",
+      whyH: 'The cost of <em>finding out late</em>',
+      whyP: "Most breaches don't need sophisticated tradecraft. They start with a known weakness nobody tested, in an exposed system or a supplier. The latest industry data shows how big the problem is:",
+      why: [
+        { n: 'US$4.99M', l: 'is the average cost of a data breach, a record high and 12% more than the year before.', src: 'IBM, Cost of a Data Breach 2026', href: 'https://www.ibm.com/reports/data-breach' },
+        { n: '31%', l: 'of breaches started with the exploitation of a vulnerability, now the most common way attackers get in.', src: 'Verizon, DBIR 2026', href: 'https://www.verizon.com/business/resources/reports/dbir/' },
+        { n: '43 days', l: 'is the median time to fully fix a critical, actively exploited vulnerability. Only 26% of them were fully remediated.', src: 'Verizon, DBIR 2026', href: 'https://www.verizon.com/business/resources/reports/dbir/' },
+        { n: '48%', l: 'of breaches involved ransomware, and another 48% involved a third party such as a supplier or partner.', src: 'Verizon, DBIR 2026', href: 'https://www.verizon.com/business/resources/reports/dbir/' },
+      ],
+      howH: 'Where a pentest fits',
+      how: [
+        { t: 'Find the way in before an attacker does', d: 'If exploiting vulnerabilities is the top way in, the most direct defense is to look for them the way an attacker would, with manual testing of your applications, APIs and network.' },
+        { t: 'Know what to fix first', d: 'Teams fix slowly because they have too many findings. The report ranks each one by real impact and exploitability, so effort goes to what actually opens the door.' },
+        { t: 'Have evidence for customers and auditors', d: "An independent report answers customers' security questionnaires and supports audits such as ISO 27001 and SOC 2, and shows due diligence under data-protection laws like GDPR and Brazil's LGPD." },
+      ],
+      svcH: 'What I <em>test</em>',
+      svcP: 'Every engagement is manual, scoped in writing, and ends with a report your developers can act on: reproducible steps, impact and fixes.',
+      svcBtn: 'How engagements work',
+      services: [
+        { t: 'Web & API pentest', d: 'Manual testing of web applications and APIs, beyond what scanners report: access control, business logic and the way components chain together.', i: ['OWASP Top 10 / API Top 10', 'Authn, authz & IDOR', 'Business-logic abuse'] },
+        { t: 'Internal & Active Directory', d: 'Assume-breach assessments that start from a foothold and map the realistic path to domain compromise.', i: ['AD attack paths', 'Credential & Kerberos abuse', 'Lateral movement'] },
+        { t: 'AI / LLM red teaming', d: 'Adversarial testing of LLM apps and agents: prompt injection, tool abuse and trust boundaries between agents.', i: ['OWASP LLM Top 10', 'Agent & MCP tool abuse', 'Data-exfiltration paths'] },
+      ],
+      cveH: 'Disclosed <em>vulnerabilities</em>',
+      cveBtn: 'All disclosures',
+      wuH: 'Recent <em>writeups</em>',
+      wuP: 'End-to-end attack chains from HackTheBox machines and AI red-team labs. Active machines stay sealed until they retire.',
+      wuBtn: 'All writeups',
+      sealed: 'sealed',
+      retired: 'retired',
+      artH: 'Research &amp; <em>articles</em>',
+      artBtn: 'All articles',
+      certH: 'Certifications',
+      certP: 'Hands-on, lab-based exams covering pentest, red team, Active Directory, web, API and AI security.',
+      certBtn: 'Details',
+    };
+
+const stats = [certs.length, writeups.length, ai.length, articles.length].map((n, i) => ({ n, l: c.stats[i] }));
+
+const htbRows = writeups.slice(0, 3).map((w) => ({ href: lp(lang, `/writeups/${w.id}/`), date: w.data.date, title: w.data.machine, summary: w.data.summary, tags: [w.data.platform, w.data.difficulty, w.locked ? c.sealed : c.retired] }));
+const aiRows = ai.slice(0, 2).map((w) => ({ href: lp(lang, `/ai/${w.id}/`), date: w.data.date, title: w.data.title, summary: w.data.summary, tags: [pt ? 'IA/LLM' : 'AI/LLM', w.data.severity] }));
+const latest = [...htbRows, ...aiRows].sort((a, b) => +b.date - +a.date || a.title.localeCompare(b.title));
+---
+<Base active="home">
+  <section class="hero">
+    <div class="hero__grid">
+      <AttackGraph />
+      <div>
+        <p class="hero__prompt">$ whoami<span class="cursor" aria-hidden="true"></span></p>
+        <h1 set:html={c.h1} />
+        <p class="hero__roles">{c.roles.map((r, i) => <>{i > 0 && <span>/</span>}{r}</>)}</p>
+        <p class="hero__lede">{c.lede}</p>
+        <div class="btnrow">
+          <a class="btn btn--primary" href={lp(lang, '/pentest/#scope')}>{t('cta.scope')}</a>
+          <a class="btn" href={bookingHref(lang)}>{t('cta.book')}</a>
+          <a class="textlink" href={lp(lang, '/writeups/')}>{c.read}</a>
+        </div>
+      </div>
+    </div>
+    <div class="hero__foot">
+      <span>{c.foot}</span>
+      <span class="muted">{c.foot2}</span>
+    </div>
+  </section>
+
+  <section class="stats" aria-label={c.glance}>
+    {stats.map((s) => (
+      <div class="stat"><div class="stat__n">{s.n}</div><div class="stat__l">{s.l}</div></div>
+    ))}
+  </section>
+
+  <section class="section" id="why">
+    <div class="punch">
+      <p class="kicker">{c.whyK}</p>
+      <h2 set:html={c.punchH} />
+      <p>{c.punchP}</p>
+    </div>
+    <div class="section__head">
+      <div>
+        <h3 class="why__h" style="margin-top:0;" set:html={c.whyH} />
+        <p>{c.whyP}</p>
+      </div>
+    </div>
+    <div class="why">
+      {c.why.map((w) => (
+        <figure class="why__item">
+          <div class="why__n">{w.n}</div>
+          <p class="why__l">{w.l}</p>
+          <figcaption><a href={w.href} target="_blank" rel="noopener">{w.src} ↗</a></figcaption>
+        </figure>
+      ))}
+    </div>
+    <h3 class="why__h">{c.howH}</h3>
+    <div class="how">
+      {c.how.map((h, i) => (
+        <div class="how__item">
+          <div class="service__n">0{i + 1}</div>
+          <h4>{h.t}</h4>
+          <p>{h.d}</p>
+        </div>
+      ))}
+    </div>
+    <div class="btnrow" style="margin-top:32px;">
+      <a class="btn btn--primary" href={lp(lang, '/pentest/#scope')}>{t('cta.scope')}</a>
+      <a class="btn" href={bookingHref(lang)}>{t('cta.book')}</a>
+    </div>
+  </section>
+
+  <section class="section" id="services">
+    <div class="section__head">
+      <div>
+        <p class="kicker">cat services.txt</p>
+        <h2 set:html={c.svcH} />
+        <p>{c.svcP}</p>
+      </div>
+      <a class="btn btn--ghost" href={lp(lang, '/pentest/')}>{c.svcBtn}</a>
+    </div>
+    <div class="services">
+      {c.services.map((s, i) => (
+        <article class="service">
+          <div class="service__n">0{i + 1}</div>
+          <h3>{s.t}</h3>
+          <p>{s.d}</p>
+          <ul>{s.i.map((x) => <li>{x}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  {cves.length > 0 && (
+    <section class="section" id="disclosures">
+      <div class="section__head">
+        <div>
+          <p class="kicker">cat disclosures.log</p>
+          <h2 set:html={c.cveH} />
+        </div>
+        <a class="btn btn--ghost" href={lp(lang, '/cves/')}>{c.cveBtn}</a>
+      </div>
+      <div class="rows">
+        {cves.map((v) => (
+          <a class="row" href={lp(lang, `/cves/${v.id}/`)}>
+            <span class="row__date">{v.data.cve}</span>
+            <div><div class="row__title">{v.data.title}</div><p class="row__summary">{v.data.vendor} / {v.data.product}</p></div>
+            <div class="row__meta"><span class={`badge badge--${v.data.severity.toLowerCase()}`}>{v.data.severity}</span></div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="section" id="writeups">
+    <div class="section__head">
+      <div>
+        <p class="kicker">ls -t writeups/</p>
+        <h2 set:html={c.wuH} />
+        <p>{c.wuP}</p>
+      </div>
+      <a class="btn btn--ghost" href={lp(lang, '/writeups/')}>{c.wuBtn}</a>
+    </div>
+    <div class="rows">
+      {latest.map((w) => (
+        <a class="row" href={w.href}>
+          <span class="row__date">{fmtDate(w.date, lang)}</span>
+          <div><div class="row__title">{w.title}</div><p class="row__summary" lang="en">{w.summary}</p></div>
+          <div class="row__meta">{w.tags.map((x) => <span class="tag">{x}</span>)}</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" id="articles">
+    <div class="section__head">
+      <div>
+        <p class="kicker">ls articles/</p>
+        <h2 set:html={c.artH} />
+      </div>
+      <a class="btn btn--ghost" href={lp(lang, '/articles/')}>{c.artBtn}</a>
+    </div>
+    <div class="rows">
+      {articles.slice(0, 4).map((a) => (
+        <a class="row" href={lp(lang, `/articles/${a.id}/`)}>
+          <span class="row__date">{fmtDate(a.data.date, lang)}</span>
+          <div lang="en"><div class="row__title">{a.data.title}</div><p class="row__summary">{a.data.summary}</p></div>
+          <div class="row__meta">{a.data.tags.slice(0, 2).map((x) => <span class="tag">{x}</span>)}</div>
+        </a>
+      ))}
+    </div>
+  </section>
+
+  <section class="section" id="certs">
+    <div class="section__head">
+      <div>
+        <p class="kicker">ls ~/certs</p>
+        <h2>{c.certH}</h2>
+        <p>{c.certP}</p>
+      </div>
+      <a class="btn btn--ghost" href={lp(lang, '/certs/')}>{c.certBtn}</a>
+    </div>
+    <div class="certstrip">
+      {certs.map((x) => <a href={lp(lang, `/certs/#${x.id}`)} title={x.data.name}>{x.data.code}</a>)}
+    </div>
+  </section>
+
+  <Cta />
+</Base>

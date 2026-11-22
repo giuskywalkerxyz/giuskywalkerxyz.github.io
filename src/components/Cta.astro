@@ -1,18 +1,18 @@
 ---
 import { bookingHref, mailto } from '../site';
+import { langOf, lp, useT } from '../i18n';
+const lang = langOf(Astro.url.pathname);
+const t = useT(lang);
 ---
 <section class="cta" aria-labelledby="cta-h">
   <div>
-    <p class="kicker">./contact --scope yours</p>
-    <h2 id="cta-h">Have something <em>in scope?</em></h2>
-    <p>
-      Tell me about the target, the environment and your timeline. I'll come back with questions
-      and a proposed approach. Testing only starts with written authorization.
-    </p>
+    <p class="kicker">{t('cta.kicker')}</p>
+    <h2 id="cta-h" set:html={t('cta.h')} />
+    <p>{t('cta.p')}</p>
   </div>
   <div class="btnrow">
-    <a class="btn btn--primary" href="/pentest/#scope">Scope a pentest</a>
-    <a class="btn" href={bookingHref()}>Book a call</a>
-    <a class="btn" href={mailto('Engagement inquiry')}>E-mail</a>
+    <a class="btn btn--primary" href={lp(lang, '/pentest/#scope')}>{t('cta.scope')}</a>
+    <a class="btn" href={bookingHref(lang)}>{t('cta.book')}</a>
+    <a class="btn" href={mailto(t('mail.inquiry'))}>{t('cta.email')}</a>
   </div>
 </section>

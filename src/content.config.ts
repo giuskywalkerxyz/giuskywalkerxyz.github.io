@@ -119,6 +119,7 @@ const certifications = defineCollection({
     verifyUrl: z.string().url().optional(),
     skills: z.array(z.string()).default([]),
     summary: z.string(),
+    summaryPt: z.string().optional(),
     order: z.number().default(99),
   }),
 });

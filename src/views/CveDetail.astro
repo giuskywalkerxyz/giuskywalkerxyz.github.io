@@ -1,0 +1,42 @@
+---
+import Base from '../layouts/Base.astro';
+import { render } from 'astro:content';
+import { fmtDate, langOf, lp, useT } from '../i18n';
+
+const { entry } = Astro.props as { entry: any };
+const lang = langOf(Astro.url.pathname);
+const t = useT(lang);
+const pt = lang === 'pt';
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={`${d.cve}: ${d.title}`} active="cves" description={d.summary}>
+  <article class="article">
+    <header class="article__head">
+      <p class="kicker">{pt ? 'divulgação' : 'disclosure'} · {d.cve}</p>
+      <h1 lang="en">{d.title}</h1>
+      <div class="article__meta">
+        <span class={`badge badge--${d.severity.toLowerCase()}`}>{d.severity}{d.cvss && ` · ${d.cvss}`}</span>
+        {d.cwe.map((w: string) => <span class="tag">{w}</span>)}
+        {d.credited && <span class="tag">{pt ? 'creditado' : 'credited'}</span>}
+        <span class="tag">{fmtDate(d.date, lang)}</span>
+      </div>
+    </header>
+
+    {pt && <p class="notice">{t('en.only')}</p>}
+
+    <table class="specs">
+      <tbody>
+        <tr><th>CVE</th><td>{d.cve}</td></tr>
+        {d.ghsa && <tr><th>GHSA</th><td>{d.ghsa}</td></tr>}
+        <tr><th>{pt ? 'Fornecedor / produto' : 'Vendor / product'}</th><td>{d.vendor} / {d.product}</td></tr>
+        <tr><th>{pt ? 'Classe' : 'Class'}</th><td>{d.cwe.join(' · ')}</td></tr>
+        {d.cvssVector && <tr><th>CVSS 3.1</th><td>{d.cvss} · <code>{d.cvssVector}</code></td></tr>}
+        {d.advisoryUrl && <tr><th>Advisory</th><td><a href={d.advisoryUrl}>{d.advisoryUrl}</a></td></tr>}
+      </tbody>
+    </table>
+
+    <div class="prose" lang="en"><Content /></div>
+    <p class="article__back"><a class="textlink" href={lp(lang, '/cves/')}>{t('back.cves')}</a></p>
+  </article>
+</Base>

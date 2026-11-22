@@ -1,26 +1,4 @@
 ---
-import Base from '../../layouts/Base.astro';
-import { getCollection } from 'astro:content';
-import { byDateDesc } from '../../lib/sortByDate';
-import { fmtDate } from '../../site';
-
-const articles = (await getCollection('articles', (e) => !e.data.draft)).sort(byDateDesc);
+import View from '../../views/ArticlesIndex.astro';
 ---
-<Base title="Articles" active="articles" description="Security research, techniques and tooling notes.">
-  <header class="pagehead">
-    <p class="kicker">ls articles/</p>
-    <h1>Research &amp; <em>articles</em></h1>
-    <p class="lede">Technique deep-dives, certification lab reviews and tooling notes.</p>
-  </header>
-
-  <div class="rows">
-    {articles.map((a) => (
-      <a class="row" href={`/articles/${a.id}/`}>
-        <span class="row__date">{fmtDate(a.data.date)}</span>
-        <div><div class="row__title">{a.data.title}</div><p class="row__summary">{a.data.summary}</p></div>
-        <div class="row__meta">{a.data.tags.slice(0, 3).map((t) => <span class="tag">{t}</span>)}</div>
-      </a>
-    ))}
-    {articles.length === 0 && <p class="empty">No articles yet.</p>}
-  </div>
-</Base>
+<View />

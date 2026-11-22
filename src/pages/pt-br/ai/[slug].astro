@@ -1,0 +1,7 @@
+---
+import View from '../../../views/AiDetail.astro';
+import { collectionPaths } from '../../../lib/paths';
+
+export const getStaticPaths = () => collectionPaths('ai');
+---
+<View {...Astro.props} />

@@ -1,0 +1,7 @@
+---
+import View from '../../../views/ArticleDetail.astro';
+import { collectionPaths } from '../../../lib/paths';
+
+export const getStaticPaths = () => collectionPaths('articles');
+---
+<View {...Astro.props} />

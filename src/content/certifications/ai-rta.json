@@ -15,5 +15,6 @@
   "summary": "AI-native offense end to end: abusing an LLM copilot's MCP tools, poisoning a RAG knowledge base to drive an agent-only SSRF, pivoting through leaked config into an internal autonomous agent fleet, and talking a guardrailed agent out of the final flag.",
   "issued": "2026-10",
   "credentialId": "6ae2a5797bd2ad906549c8b4",
-  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/6ae2a5797bd2ad906549c8b4"
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/6ae2a5797bd2ad906549c8b4",
+  "summaryPt": "Ofensiva em IA de ponta a ponta: abuso das ferramentas MCP de um copiloto LLM, envenenamento de uma base RAG para disparar um SSRF exclusivo do agente, pivô via configuração vazada até uma frota interna de agentes autônomos e convencer um agente com guardrails a entregar a flag final."
 }

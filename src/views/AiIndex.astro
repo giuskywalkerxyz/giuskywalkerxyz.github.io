@@ -1,0 +1,55 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { langOf, lp } from '../i18n';
+
+const lang = langOf(Astro.url.pathname);
+const pt = lang === 'pt';
+const all = (await getCollection('ai', (e) => !e.data.draft)).sort(
+  (a, b) => a.data.order - b.data.order || +a.data.date - +b.data.date
+);
+---
+<Base
+  title={pt ? 'Segurança de IA' : 'AI security'}
+  active="ai"
+  description={pt
+    ? 'Writeups de segurança de IA e LLM: prompt injection, RCE via ferramentas, abuso de MCP e escalação de privilégio entre agentes.'
+    : 'AI & LLM security writeups: prompt injection, tool-level RCE, MCP abuse and multi-agent privilege escalation.'}
+>
+  <header class="pagehead">
+    <p class="kicker">ls writeups/ai/</p>
+    {pt ? (
+      <>
+        <h1>Segurança de <em>IA e LLM</em></h1>
+        <p class="lede">
+          Atacando agentes de IA em vez de hosts: RCE via ferramentas, abuso de MCP, fronteiras de confiança entre
+          agentes e as falhas de lógica de negócio que aparecem quando um LLM pode chamar ferramentas. A primeira
+          leva vem do Arkx AI Red-Team CTF (trilhas Advanced e Expert). Os writeups estão em inglês.
+        </p>
+      </>
+    ) : (
+      <>
+        <h1>AI &amp; LLM <em>security</em></h1>
+        <p class="lede">
+          Attacking AI agents rather than hosts: tool-level RCE, MCP abuse, trust boundaries between agents,
+          and the business-logic failures that appear once an LLM can call tools. The first set comes from the
+          Arkx AI Red-Team CTF (Advanced and Expert tracks).
+        </p>
+      </>
+    )}
+  </header>
+
+  <div class="rows">
+    {all.map((w) => (
+      <a class="row" href={lp(lang, `/ai/${w.id}/`)}>
+        <span class="row__date">{w.data.track} · {w.data.level}</span>
+        <div lang="en"><div class="row__title">{w.data.title.replace(/^Arkx — /, '')}</div><p class="row__summary">{w.data.summary}</p></div>
+        <div class="row__meta">
+          <span class={`badge badge--${w.data.severity.toLowerCase()}`}>{w.data.severity}</span>
+          <span class="tag">{w.data.vuln}</span>
+        </div>
+      </a>
+    ))}
+    {all.length === 0 && <p class="empty">{pt ? 'Nenhum writeup de IA publicado ainda.' : 'No AI writeups published yet.'}</p>}
+  </div>
+</Base>

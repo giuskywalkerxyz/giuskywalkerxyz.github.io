@@ -1,0 +1,80 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { byDateDesc } from '../lib/sortByDate';
+import { fmtDate, langOf, lp } from '../i18n';
+
+const lang = langOf(Astro.url.pathname);
+const pt = lang === 'pt';
+const pub = (await getCollection('writeups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: false }));
+const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: true }));
+const all = [...pub, ...prot].sort(byDateDesc);
+---
+<Base
+  title="Writeups"
+  active="writeups"
+  description={pt
+    ? 'Writeups do HackTheBox. Máquinas aposentadas são públicas; máquinas ativas ficam seladas até serem aposentadas.'
+    : 'HackTheBox writeups. Retired machines are public; active machines are sealed until they retire.'}
+>
+  <header class="pagehead">
+    <p class="kicker">ls -t writeups/</p>
+    {pt ? (
+      <>
+        <h1><em>Writeups</em> de máquinas</h1>
+        <p class="lede">
+          Cadeias de ataque completas do HackTheBox. Máquinas aposentadas são públicas. Writeups de máquinas
+          ativas ficam selados (AES-256-GCM, decifrados no navegador), porque a própria cadeia é o spoiler.
+          Os writeups estão em inglês. Para labs de exploração de agentes de IA, veja <a class="textlink" href={lp(lang, '/ai/')}>segurança de IA</a>.
+        </p>
+      </>
+    ) : (
+      <>
+        <h1>Machine <em>writeups</em></h1>
+        <p class="lede">
+          End-to-end attack chains from HackTheBox. Retired machines are public. Writeups for
+          active-season machines are sealed (AES-256-GCM, decrypted in the browser) because the chain
+          itself is the spoiler. For AI agent exploitation labs, see <a class="textlink" href="/ai/">AI security</a>.
+        </p>
+      </>
+    )}
+  </header>
+
+  <div class="tabs" role="group" aria-label={pt ? 'Filtrar writeups' : 'Filter writeups'}>
+    <button type="button" data-f="all" aria-pressed="true">{pt ? 'Todos' : 'All'} · {all.length}</button>
+    <button type="button" data-f="open" aria-pressed="false">{pt ? 'Aposentadas' : 'Retired'} · {pub.length}</button>
+    <button type="button" data-f="sealed" aria-pressed="false">{pt ? 'Ativas, seladas' : 'Active, sealed'} · {prot.length}</button>
+  </div>
+
+  <div class="rows" id="wu-rows">
+    {all.map((w) => (
+      <a class="row" href={lp(lang, `/writeups/${w.id}/`)} data-k={w.locked ? 'sealed' : 'open'}>
+        <span class="row__date">{fmtDate(w.data.date, lang)}</span>
+        <div lang="en">
+          <div class="row__title">{w.data.machine}</div>
+          <p class="row__summary">{w.data.summary}</p>
+        </div>
+        <div class="row__meta">
+          <span class={`badge badge--${w.data.difficulty.toLowerCase()}`}>{w.data.difficulty}</span>
+          <span class="tag">{w.data.os}</span>
+          {w.locked ? <span class="badge badge--solid">{pt ? 'selado' : 'sealed'}</span> : <span class="tag">{pt ? 'aposentada' : 'retired'}</span>}
+        </div>
+      </a>
+    ))}
+    {all.length === 0 && <p class="empty">{pt ? 'Nenhum writeup publicado ainda.' : 'No writeups published yet.'}</p>}
+  </div>
+
+  <script is:inline>
+    (function () {
+      var btns = document.querySelectorAll('.tabs button');
+      var rows = document.querySelectorAll('#wu-rows .row');
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var f = b.getAttribute('data-f');
+          btns.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+          rows.forEach(function (r) { r.style.display = f === 'all' || r.getAttribute('data-k') === f ? '' : 'none'; });
+        });
+      });
+    })();
+  </script>
+</Base>

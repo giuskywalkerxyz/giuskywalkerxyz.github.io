@@ -1,27 +1,33 @@
 ---
 import '../styles/global.css';
 import { SITE, SOCIALS, bookingHref } from '../site';
+import { altPath, langOf, lp, useT, PT_PREFIX } from '../i18n';
 
 interface Props {
   title?: string;
   description?: string;
   active?: string;
 }
-const { title, description = SITE.description, active } = Astro.props;
-const pageTitle = title ? `${title} — ${SITE.name}` : SITE.title;
+const lang = langOf(Astro.url.pathname);
+const t = useT(lang);
+const { title, description = t('meta.description'), active } = Astro.props;
+const pageTitle = title ? `${title} — ${SITE.name}` : t('meta.title');
 
 const nav = [
-  { href: '/pentest/', label: 'services', key: 'pentest' },
-  { href: '/writeups/', label: 'writeups', key: 'writeups' },
-  { href: '/ai/', label: 'ai security', key: 'ai' },
-  { href: '/articles/', label: 'articles', key: 'articles' },
-  { href: '/certs/', label: 'certs', key: 'certs' },
-  { href: '/about/', label: 'about', key: 'about' },
+  { href: '/pentest/', label: t('nav.services'), key: 'pentest' },
+  { href: '/writeups/', label: t('nav.writeups'), key: 'writeups' },
+  { href: '/ai/', label: t('nav.ai'), key: 'ai' },
+  { href: '/articles/', label: t('nav.articles'), key: 'articles' },
+  { href: '/certs/', label: t('nav.certs'), key: 'certs' },
+  { href: '/about/', label: t('nav.about'), key: 'about' },
 ];
 const canonical = new URL(Astro.url.pathname, Astro.site);
+const alt = altPath(Astro.url.pathname);
+const enPath = lang === 'en' ? Astro.url.pathname : alt.href;
+const ptPath = lang === 'pt' ? Astro.url.pathname : alt.href;
 ---
 <!doctype html>
-<html lang="en">
+<html lang={lang === 'pt' ? 'pt-BR' : 'en'}>
   <head>
     <meta charset="utf-8" />
     <meta name="viewport" content="width=device-width, initial-scale=1" />
@@ -29,7 +35,11 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     <meta name="generator" content={Astro.generator} />
     <meta name="theme-color" content="#f1efea" />
     <link rel="canonical" href={canonical} />
+    <link rel="alternate" hreflang="en" href={new URL(enPath, Astro.site)} />
+    <link rel="alternate" hreflang="pt-BR" href={new URL(ptPath, Astro.site)} />
+    <link rel="alternate" hreflang="x-default" href={new URL(enPath, Astro.site)} />
     <meta property="og:type" content="website" />
+    <meta property="og:locale" content={lang === 'pt' ? 'pt_BR' : 'en_US'} />
     <meta property="og:title" content={pageTitle} />
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
@@ -43,19 +53,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
     />
   </head>
   <body>
-    <a class="skip" href="#main">Skip to content</a>
+    <a class="skip" href="#main">{t('skip')}</a>
     <header class="topbar">
       <div class="wrap">
-        <a class="brand" href="/">
+        <a class="brand" href={lp(lang, '/')}>
           <span class="brand__name">Giulliano Amaral</span>
-          <span class="brand__tag">offensive security</span>
+          <span class="brand__tag">{t('brand.tag')}</span>
         </a>
-        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">menu</button>
-        <nav class="nav" id="site-nav" aria-label="Main">
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-open={t('nav.close')} data-closed={t('nav.menu')}>{t('nav.menu')}</button>
+        <nav class="nav" id="site-nav" aria-label={t('nav.main')}>
           {nav.map((n) => (
-            <a href={n.href} aria-current={active === n.key ? 'page' : undefined}>{n.label}</a>
+            <a href={lp(lang, n.href)} aria-current={active === n.key ? 'page' : undefined}>{n.label}</a>
           ))}
-          <a class="btn btn--primary btn--sm" href="/pentest/#scope">Scope a pentest</a>
+          <a class="lang" href={alt.href} hreflang={alt.lang === 'pt' ? 'pt-BR' : 'en'} lang={alt.lang === 'pt' ? 'pt-BR' : 'en'} title={t('lang.switchLabel')} data-lang={alt.lang}>{alt.lang === 'pt' ? 'PT' : 'EN'}</a>
+          <a class="btn btn--primary btn--sm" href={lp(lang, '/pentest/#scope')}>{t('cta.scope')}</a>
         </nav>
       </div>
     </header>
@@ -69,19 +80,20 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         <div class="footer__grid">
           <div>
             <div class="footer__name">Giulliano Amaral</div>
-            <p>Penetration testing and offensive security research. {SITE.location}, working remotely worldwide.</p>
+            <p>{t('footer.about')}</p>
           </div>
           <div>
-            <h4>Work</h4>
+            <h4>{t('footer.work')}</h4>
             <ul>
-              <li><a href="/pentest/">Services</a></li>
-              <li><a href="/pentest/#scope">Scope a pentest</a></li>
-              <li><a href={bookingHref()}>Book a call</a></li>
-              <li><a href="/about/">About</a></li>
+              <li><a href={lp(lang, '/pentest/')}>{t('footer.services')}</a></li>
+              <li><a href={lp(lang, '/pentest/#scope')}>{t('cta.scope')}</a></li>
+              <li><a href={bookingHref(lang)}>{t('cta.book')}</a></li>
+              <li><a href={lp(lang, '/about/')}>{t('footer.aboutLink')}</a></li>
+              <li><a href={alt.href} data-lang={alt.lang}>{t('lang.switch')}</a></li>
             </ul>
           </div>
           <div>
-            <h4>Elsewhere</h4>
+            <h4>{t('footer.elsewhere')}</h4>
             <ul>
               {SOCIALS.map((s) => <li><a href={s.href} rel="me noopener" target="_blank">{s.label}</a></li>)}
             </ul>
@@ -89,21 +101,34 @@ const canonical = new URL(Astro.url.pathname, Astro.site);
         </div>
         <div class="footer__base">
           <span>© {new Date().getFullYear()} Giulliano Amaral</span>
-          <span>// authorized testing only — written scope, every time</span>
+          <span>{t('footer.legal')}</span>
         </div>
       </div>
     </footer>
 
-    <script is:inline>
+    <script is:inline define:vars={{ lang, PT_PREFIX }}>
       (function () {
         var b = document.querySelector('.menu-toggle');
         var n = document.getElementById('site-nav');
-        if (!b || !n) return;
-        b.addEventListener('click', function () {
-          var open = n.classList.toggle('open');
-          b.setAttribute('aria-expanded', open ? 'true' : 'false');
-          b.textContent = open ? 'close' : 'menu';
+        if (b && n) {
+          b.addEventListener('click', function () {
+            var open = n.classList.toggle('open');
+            b.setAttribute('aria-expanded', open ? 'true' : 'false');
+            b.textContent = open ? b.dataset.open : b.dataset.closed;
+          });
+        }
+        // Remember an explicit language choice; on the first visit, send pt-* browsers to /pt-br/.
+        var KEY = 'lang-choice';
+        document.querySelectorAll('a[data-lang]').forEach(function (a) {
+          a.addEventListener('click', function () { try { localStorage.setItem(KEY, a.dataset.lang); } catch (e) {} });
         });
+        try {
+          var chosen = localStorage.getItem(KEY);
+          if (!chosen && lang === 'en' && location.pathname === '/' && /^pt\b/i.test(navigator.language || '')) {
+            localStorage.setItem(KEY, 'pt');
+            location.replace(PT_PREFIX + '/');
+          }
+        } catch (e) {}
       })();
     </script>
   </body>

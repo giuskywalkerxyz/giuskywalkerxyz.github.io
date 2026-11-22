@@ -1,0 +1,7 @@
+---
+import View from '../../../views/CveDetail.astro';
+import { collectionPaths } from '../../../lib/paths';
+
+export const getStaticPaths = () => collectionPaths('cves');
+---
+<View {...Astro.props} />

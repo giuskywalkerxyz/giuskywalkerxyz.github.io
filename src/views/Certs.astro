@@ -1,0 +1,65 @@
+---
+import Base from '../layouts/Base.astro';
+import { getCollection } from 'astro:content';
+import { fmtMonth, langOf } from '../i18n';
+
+const lang = langOf(Astro.url.pathname);
+const pt = lang === 'pt';
+const certs = (await getCollection('certifications')).sort((a, b) => a.data.order - b.data.order);
+const earned = certs.filter((c) => c.data.status === 'earned');
+const inProgress = certs.filter((c) => c.data.status === 'in-progress');
+const issuers = [...new Set(earned.map((c) => c.data.issuer))];
+const summary = (d: { summary: string; summaryPt?: string }) => (pt && d.summaryPt) || d.summary;
+---
+<Base
+  title={pt ? 'Certificações' : 'Certifications'}
+  active="certs"
+  description={pt ? 'Certificações de segurança ofensiva de Giulliano Amaral.' : 'Offensive security certifications held by Giulliano Amaral.'}
+>
+  <header class="pagehead">
+    <p class="kicker">ls ~/certs</p>
+    <h1>{pt ? 'Certificações' : 'Certifications'}</h1>
+    <p class="lede">
+      {pt
+        ? `${earned.length} certificações práticas, em laboratório, de ${issuers.length} ${issuers.length === 1 ? 'emissor' : 'emissores'}, cobrindo pentest, red team, Active Directory, web, APIs e segurança de IA. Cada uma tem link para a página pública de verificação, quando existe.`
+        : `${earned.length} practical, lab-based certifications from ${issuers.length} ${issuers.length === 1 ? 'issuer' : 'issuers'}, covering pentest, red team, Active Directory, web, API and AI security. Each links to its public verification page where one exists.`}
+    </p>
+  </header>
+
+  <div class="certgrid">
+    {earned.map((c) => (
+      <article class="cert" id={c.id}>
+        <div class="cert__top">
+          <span class="cert__code">{c.data.code}</span>
+          <span class="tag">{c.data.track}</span>
+        </div>
+        <h2 class="cert__name">{c.data.name}</h2>
+        <p class="cert__issuer">{c.data.issuer}{fmtMonth(c.data.issued, lang) && <> · {fmtMonth(c.data.issued, lang)}</>}</p>
+        <p class="cert__summary">{summary(c.data)}</p>
+        <div class="cert__skills">{c.data.skills.map((s) => <span class="tag">{s}</span>)}</div>
+        {(c.data.verifyUrl || c.data.credentialId) && (
+          <div class="cert__foot">
+            <span class="muted">{c.data.credentialId && <>ID {c.data.credentialId.slice(0, 12)}…</>}</span>
+            {c.data.verifyUrl && <a href={c.data.verifyUrl} target="_blank" rel="noopener">{pt ? 'Verificar ↗' : 'Verify ↗'}</a>}
+          </div>
+        )}
+      </article>
+    ))}
+  </div>
+
+  {inProgress.length > 0 && (
+    <section class="section">
+      <div class="section__head"><div><p class="kicker">ls ~/certs/in-progress</p><h2 set:html={pt ? 'Em <em>andamento</em>' : 'In <em>progress</em>'} /></div></div>
+      <div class="certgrid">
+        {inProgress.map((c) => (
+          <article class="cert cert--wip" id={c.id}>
+            <div class="cert__top"><span class="cert__code">{c.data.code}</span><span class="tag">{pt ? 'em andamento' : 'in progress'}</span></div>
+            <h2 class="cert__name">{c.data.name}</h2>
+            <p class="cert__issuer">{c.data.issuer}</p>
+            <p class="cert__summary">{summary(c.data)}</p>
+          </article>
+        ))}
+      </div>
+    </section>
+  )}
+</Base>

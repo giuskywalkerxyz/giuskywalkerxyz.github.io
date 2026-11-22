@@ -16,5 +16,6 @@
   "summary": "API offense end to end: a JWKS-leaked HS256 secret into token forging (BOLA + BFLA), client-trusted pricing, a self-debugging Lambda, SSRF-into-S3 object read, and UNION SQLi — the OWASP API Top 10, live.",
   "issued": "2026-10",
   "credentialId": "6ae2b389f88c7cc4d402da3b",
-  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/6ae2b389f88c7cc4d402da3b"
+  "verifyUrl": "https://labs.cyberwarfare.live/credential/achievement/6ae2b389f88c7cc4d402da3b",
+  "summaryPt": "Ofensiva em APIs de ponta a ponta: segredo HS256 vazado via JWKS para forjar tokens (BOLA + BFLA), preço confiado ao cliente, uma Lambda que se autodepura, SSRF até leitura de objetos no S3 e SQLi com UNION — o OWASP API Top 10 na prática."
 }

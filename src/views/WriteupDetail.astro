@@ -1,0 +1,115 @@
+---
+import Base from '../layouts/Base.astro';
+import { render } from 'astro:content';
+import { fmtDate, langOf, lp, useT } from '../i18n';
+
+const { kind, entry } = Astro.props as { kind: 'public' | 'protected'; entry: any };
+const lang = langOf(Astro.url.pathname);
+const t = useT(lang);
+const pt = lang === 'pt';
+const d = entry.data;
+const diffClass = `badge badge--${d.difficulty.toLowerCase()}`;
+const Content = kind === 'public' ? (await render(entry)).Content : null;
+---
+<Base title={`${d.machine} writeup`} active="writeups" description={d.summary}>
+  <article class="article">
+    <header class="article__head">
+      <p class="kicker">{d.platform.toLowerCase()} · writeup{kind === 'protected' ? (pt ? ' · selado' : ' · sealed') : ''}</p>
+      <h1>{d.machine}</h1>
+      <div class="article__meta">
+        <span class={diffClass}>{d.difficulty}</span>
+        <span class="tag">{d.os}</span>
+        {d.season && <span class="tag">{d.season}</span>}
+        {d.points && <span class="tag">+{d.points} pts</span>}
+        <span class="tag">{fmtDate(d.date, lang)}</span>
+        {kind === 'protected'
+          ? <span class="badge badge--solid">{pt ? 'ativa · selado' : 'active · sealed'}</span>
+          : <span class="tag">{pt ? 'aposentada' : 'retired'}</span>}
+      </div>
+    </header>
+
+    {pt && kind === 'public' && <p class="notice">{t('en.only')}</p>}
+
+    {Content && <div class="prose" lang="en"><Content /></div>}
+
+    {kind === 'protected' && (
+      <>
+        <section id="gate" class="gate">
+          <p class="kicker">gpg --decrypt</p>
+          <h2>{pt ? 'Writeup selado' : 'Sealed writeup'}</h2>
+          {pt ? (
+            <p>
+              {d.machine} ainda é uma máquina <strong>ativa</strong> do HackTheBox, então a cadeia de ataque não é
+              publicada abertamente. O writeup (em inglês) é cifrado com AES-256-GCM e decifrado localmente no seu
+              navegador com a senha de acesso. Se precisar de acesso, entre em contato.
+            </p>
+          ) : (
+            <p>
+              {d.machine} is still an <strong>active</strong> HackTheBox machine, so the attack chain isn't
+              published in the open. The writeup is AES-256-GCM encrypted and decrypted locally in your
+              browser with the access password. If you need access, get in touch.
+            </p>
+          )}
+          <div class="gate__file">
+            <div>htb-{d.machine.toLowerCase()}.md.enc · {d.season}</div>
+            <div>{pt ? 'atualizado em' : 'last updated'} {fmtDate(d.date, lang)}</div>
+          </div>
+          <form id="gate-form" class="gate__form" autocomplete="off" data-err={pt ? 'Senha incorreta: falha ao decifrar.' : 'Wrong password: decryption failed.'}>
+            <label for="pw">{pt ? 'Senha' : 'Password'}</label>
+            <input id="pw" type="password" placeholder={pt ? 'digite a senha' : 'enter password'} autocomplete="off" spellcheck="false" />
+            <button type="submit" class="btn btn--primary">{pt ? 'Desbloquear writeup' : 'Unlock writeup'}</button>
+            <p id="gate-err" class="gate__err" role="alert"></p>
+          </form>
+        </section>
+
+        <div id="report" class="prose" lang="en" style="display:none;"></div>
+
+        <script type="application/json" id="cipher" set:html={JSON.stringify(d.payload)}></script>
+
+        <script is:inline src="https://cdnjs.cloudflare.com/ajax/libs/marked/12.0.2/marked.min.js"></script>
+        <script is:inline>
+          (function () {
+            var form = document.getElementById('gate-form');
+            var input = document.getElementById('pw');
+            var errEl = document.getElementById('gate-err');
+            var gate = document.getElementById('gate');
+            var out = document.getElementById('report');
+            var data = JSON.parse(document.getElementById('cipher').textContent);
+
+            function b64(s) { return Uint8Array.from(atob(s), function (c) { return c.charCodeAt(0); }); }
+
+            form.addEventListener('submit', async function (e) {
+              e.preventDefault();
+              errEl.textContent = '';
+              var pw = input.value;
+              if (!pw) return;
+              try {
+                var enc = new TextEncoder();
+                var km = await crypto.subtle.importKey('raw', enc.encode(pw), 'PBKDF2', false, ['deriveKey']);
+                var key = await crypto.subtle.deriveKey(
+                  { name: 'PBKDF2', salt: b64(data.salt), iterations: data.iter, hash: 'SHA-256' },
+                  km,
+                  { name: 'AES-GCM', length: 256 },
+                  false,
+                  ['decrypt']
+                );
+                var ptBuf = await crypto.subtle.decrypt({ name: 'AES-GCM', iv: b64(data.iv) }, key, b64(data.ct));
+                var md = new TextDecoder().decode(ptBuf);
+                out.innerHTML = window.marked ? window.marked.parse(md) : md;
+                gate.style.display = 'none';
+                out.style.display = 'block';
+                out.scrollIntoView({ behavior: 'smooth' });
+              } catch (err) {
+                errEl.textContent = form.dataset.err;
+                input.value = '';
+                input.focus();
+              }
+            });
+          })();
+        </script>
+      </>
+    )}
+
+    <p class="article__back"><a class="textlink" href={lp(lang, '/writeups/')}>{t('back.writeups')}</a></p>
+  </article>
+</Base>

@@ -1,0 +1,26 @@
+---
+import Base from '../layouts/Base.astro';
+import { render } from 'astro:content';
+import { fmtDate, langOf, lp, useT } from '../i18n';
+
+const { entry } = Astro.props as { entry: any };
+const lang = langOf(Astro.url.pathname);
+const t = useT(lang);
+const { Content } = await render(entry);
+const d = entry.data;
+---
+<Base title={d.title} active="articles" description={d.summary}>
+  <article class="article">
+    <header class="article__head">
+      <p class="kicker">cat articles/{entry.id}.md</p>
+      <h1 lang="en">{d.title}</h1>
+      <div class="article__meta">
+        <span class="tag">{fmtDate(d.date, lang)}</span>
+        {d.tags.map((x: string) => <span class="tag">{x}</span>)}
+      </div>
+    </header>
+    {lang === 'pt' && <p class="notice">{t('en.only')}</p>}
+    <div class="prose" lang="en"><Content /></div>
+    <p class="article__back"><a class="textlink" href={lp(lang, '/articles/')}>{t('back.articles')}</a></p>
+  </article>
+</Base>

@@ -1,0 +1,7 @@
+---
+import View from '../../../views/WriteupDetail.astro';
+import { writeupPaths } from '../../../lib/paths';
+
+export const getStaticPaths = () => writeupPaths();
+---
+<View {...Astro.props} />

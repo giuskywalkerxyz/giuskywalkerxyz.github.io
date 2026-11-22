@@ -1,0 +1,129 @@
+---
+import Base from '../layouts/Base.astro';
+import Cta from '../components/Cta.astro';
+import { getCollection } from 'astro:content';
+import { SITE, SOCIALS } from '../site';
+import { langOf, lp } from '../i18n';
+
+const lang = langOf(Astro.url.pathname);
+const pt = lang === 'pt';
+const n = (await getCollection('certifications', (c) => c.data.status === 'earned')).length;
+const yt = SOCIALS.find((s) => s.label === 'YouTube')!.href;
+const mail = `mailto:${SITE.email}`;
+
+const career = pt
+  ? [
+      { when: 'nov 2026 — atual', what: 'Pesquisador de segurança independente', note: 'Projetos de pentest, bug bounty e pesquisa de vulnerabilidades em software open source.' },
+      { when: '2026', what: 'Cybersecurity Lead · Sietch.tech', note: 'Liderei o time de pentest e fui responsável pela infraestrutura de segurança.' },
+      { when: '2025 — 2026', what: 'Analista de SOC · iT.eam', note: 'Engenharia de detecção, triagem de alertas e resposta a incidentes.' },
+      { when: 'Antes', what: 'Analista de NOC · K2 Telecom', note: 'Operação e monitoramento de redes.' },
+    ]
+  : [
+      { when: 'Nov 2026 — now', what: 'Independent security researcher', note: 'Penetration testing engagements, bug bounty and open-source vulnerability research.' },
+      { when: '2026', what: 'Cybersecurity Lead · Sietch.tech', note: 'Led the pentest team and owned the security infrastructure.' },
+      { when: '2025 — 2026', what: 'SOC Analyst · iT.eam', note: 'Detection engineering, alert triage and incident response.' },
+      { when: 'Earlier', what: 'NOC Analyst · K2 Telecom', note: 'Network operations and monitoring.' },
+    ];
+---
+<Base
+  title={pt ? 'Sobre' : 'About'}
+  active="about"
+  description={pt
+    ? 'Sobre Giulliano Amaral — pentester e pesquisador de segurança ofensiva no Rio de Janeiro.'
+    : 'About Giulliano Amaral — penetration tester and offensive security researcher based in Rio de Janeiro.'}
+>
+  <header class="pagehead">
+    <p class="kicker">whoami</p>
+    <h1>Giulliano <em>Amaral</em></h1>
+  </header>
+
+  <section class="about">
+    <img class="about__photo" src="/portrait.jpg" alt={pt ? 'Retrato de Giulliano Amaral' : 'Portrait of Giulliano Amaral'} width="560" height="750" />
+    <div class="about__body">
+      {pt ? (
+        <>
+          <p>
+            Sou <strong>pentester e pesquisador de segurança ofensiva</strong>, baseado no Rio de Janeiro.
+            Já trabalhei dos dois lados: num SOC, triando alertas e respondendo a incidentes, e liderando um
+            time de pentest. Ter visto como os ataques aparecem do lado de quem defende molda a forma como eu
+            testo e como escrevo os achados.
+          </p>
+          <p>
+            Meu foco são <strong>aplicações web e APIs</strong>, <strong>Active Directory</strong> e, cada vez
+            mais, <strong>sistemas de IA/LLM</strong> e os agentes construídos sobre eles. Fora dos projetos,
+            caço bugs em software open source, resolvo máquinas do HackTheBox e publico o que aprendo aqui e
+            no <a href={yt}>YouTube</a>.
+          </p>
+          <p>
+            Tenho pós-graduação em Red Team e <a href={lp(lang, '/certs/')}>{n} certificações práticas de segurança ofensiva</a>.
+            Falo português, inglês, espanhol e japonês (日本語). Fale comigo em <a href={mail}>{SITE.email}</a>.
+          </p>
+        </>
+      ) : (
+        <>
+          <p>
+            I'm a <strong>penetration tester and offensive security researcher</strong> based in Rio de Janeiro.
+            I've worked on both sides: in a SOC, triaging alerts and responding to incidents, and as the lead
+            of a pentest team. Having seen how attacks look from the defender's seat shapes how I test and
+            how I write findings up.
+          </p>
+          <p>
+            My work focuses on <strong>web applications and APIs</strong>, <strong>Active Directory</strong>
+            and, increasingly, <strong>AI/LLM systems</strong> and the agents built on them. Outside client work
+            I hunt bugs in open-source software, solve HackTheBox machines and publish what I learn here and
+            on <a href={yt}>YouTube</a>.
+          </p>
+          <p>
+            I hold a postgraduate degree in Red Team operations and <a href={lp(lang, '/certs/')}>{n} hands-on offensive certifications</a>.
+            I speak Portuguese, English, Spanish and Japanese (日本語). You can reach me at <a href={mail}>{SITE.email}</a>.
+          </p>
+        </>
+      )}
+      <div class="btnrow" style="margin-top:24px;">
+        {SOCIALS.map((s) => <a class="btn btn--ghost btn--sm" href={s.href} rel="me noopener" target="_blank">{s.label} ↗</a>)}
+      </div>
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section__head"><div><p class="kicker">cat experience.log</p><h2>{pt ? 'Experiência' : 'Experience'}</h2></div></div>
+    <div class="timeline">
+      {career.map((c) => (
+        <div class="tl">
+          <div class="tl__when">{c.when}</div>
+          <div><div class="tl__what">{c.what}</div><p class="tl__note">{c.note}</p></div>
+        </div>
+      ))}
+    </div>
+  </section>
+
+  <section class="section">
+    <div class="section__head">
+      <div>
+        <p class="kicker">cat ethics.md</p>
+        {pt ? (
+          <>
+            <h2>Regras de <em>engajamento</em></h2>
+            <p>
+              Só testo sistemas com autorização por escrito do responsável. Achados de clientes nunca são publicados.
+              Os writeups aqui cobrem máquinas aposentadas do HackTheBox e plataformas de laboratório; writeups de
+              máquinas ativas ficam selados. Vulnerabilidades em projetos open source só são divulgadas depois que
+              os mantenedores publicam a correção.
+            </p>
+          </>
+        ) : (
+          <>
+            <h2>Rules of <em>engagement</em></h2>
+            <p>
+              I only test systems with written authorization from their owner. Client findings are never published.
+              The writeups here cover retired HackTheBox machines and lab platforms; writeups for active machines
+              are sealed. Vulnerabilities in open-source projects are disclosed only after the maintainers publish a fix.
+            </p>
+          </>
+        )}
+      </div>
+    </div>
+  </section>
+
+  <Cta />
+</Base>

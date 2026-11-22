@@ -1,48 +1,7 @@
 ---
-import Base from '../../layouts/Base.astro';
-import { getCollection, render } from 'astro:content';
-import { fmtDate } from '../../site';
+import View from '../../views/AiDetail.astro';
+import { collectionPaths } from '../../lib/paths';
 
-export async function getStaticPaths() {
-  const entries = await getCollection('ai', (e) => !e.data.draft);
-  return entries.map((entry) => ({ params: { slug: entry.id }, props: { entry } }));
-}
-
-const { entry } = Astro.props;
-const { Content } = await render(entry);
-const d = entry.data;
+export const getStaticPaths = () => collectionPaths('ai');
 ---
-<Base title={d.title} active="ai" description={d.summary}>
-  <article class="article">
-    <header class="article__head">
-      <p class="kicker">{d.platform.toLowerCase()} · {d.track.toLowerCase()} · {d.level.toLowerCase()}</p>
-      <h1>{d.title}</h1>
-      <div class="article__meta">
-        <span class={`badge badge--${d.severity.toLowerCase()}`}>{d.severity}</span>
-        <span class="tag">{d.track}</span>
-        <span class="tag">{fmtDate(d.date)}</span>
-      </div>
-    </header>
-
-    <table class="specs">
-      <tbody>
-        <tr><th>Target</th><td>{d.platform} · {d.track} track · {d.level}</td></tr>
-        <tr><th>Vulnerability</th><td>{d.vuln}</td></tr>
-        {d.owasp.length > 0 && <tr><th>OWASP LLM Top 10</th><td>{d.owasp.join(' · ')}</td></tr>}
-        {d.atlas.length > 0 && <tr><th>MITRE ATLAS</th><td>{d.atlas.join(' · ')}</td></tr>}
-        {d.flag && <tr><th>Flag</th><td><code>{d.flag}</code></td></tr>}
-      </tbody>
-    </table>
-
-    <div class="prose">
-      {d.image && (
-        <figure>
-          <img src={d.image} alt={`${d.title}, solved`} loading="lazy" />
-          <figcaption>{d.level}, solved{d.flag && ` (${d.flag})`}</figcaption>
-        </figure>
-      )}
-      <Content />
-    </div>
-    <p class="article__back"><a class="textlink" href="/ai/">← All AI writeups</a></p>
-  </article>
-</Base>
+<View {...Astro.props} />

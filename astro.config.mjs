@@ -4,7 +4,7 @@ import { defineConfig } from 'astro/config';
 // If you host it under a project repo instead (e.g. github.com/giuskywalkerxyz/blog),
 // set `base: '/blog'` and change `site` accordingly.
 export default defineConfig({
-  site: 'https://giuskywalkerxyz.github.io',
+  site: 'https://giullianoamaral.com',
   markdown: {
     shikiConfig: {
       themes: { light: 'github-light', dark: 'github-dark-dimmed' },

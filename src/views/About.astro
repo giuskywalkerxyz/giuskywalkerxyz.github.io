@@ -52,26 +52,23 @@ const career = pt
       {pt ? (
         <>
           <p>
-            Sou <strong>pentester e pesquisador de segurança ofensiva</strong>, baseado no Rio de Janeiro.
-            Já trabalhei dos dois lados: num SOC, triando alertas e respondendo a incidentes, e liderando um
-            time de pentest. Ter visto como os ataques aparecem do lado de quem defende molda a forma como eu
-            testo e como escrevo os achados.
+            Sou <strong>pentester e pesquisador de segurança ofensiva</strong> no Rio de Janeiro.
+            Já atuei dos dois lados: em um SOC, analisando alertas e respondendo a incidentes, e à frente de um time de pentest.
+            Ter visto os ataques pela perspectiva de quem defende influencia a forma como eu testo e como documento cada achado.
           </p>
           <p>
-            Meu foco são <strong>aplicações web e APIs</strong>, <strong>Active Directory</strong> e, cada vez
-            mais, <strong>sistemas de IA/LLM</strong> e os agentes construídos sobre eles. Fora dos projetos,
-            caço bugs em software open source e publico o que aprendo aqui e no <a href={yt}>YouTube</a>.
+            Trabalho principalmente com <strong>aplicações web e APIs</strong>, <strong>Active Directory</strong> e, cada vez mais, <strong>sistemas de IA/LLM</strong> e os agentes construídos sobre eles.
+            Fora dos projetos, procuro vulnerabilidades em software open source e compartilho o que aprendo aqui e no <a href={yt}>YouTube</a>.
           </p>
           <p>
-            Mantenho a técnica afiada com CTFs: <strong>{HTB_MACHINES} máquinas no HackTheBox</strong> e <strong>{THM_ROOMS} salas no TryHackMe</strong>, mais de {LAB_HOURS} horas de laboratório prático.
-            No <a href={htb}>HackTheBox</a>, cheguei ao <strong>top 80 do
-            ranking brasileiro</strong>, com o rank Pro Hacker, e jogo as temporadas competitivas.
+            Mantenho a prática em dia com CTFs: <strong>{HTB_MACHINES} máquinas no HackTheBox</strong> e <strong>{THM_ROOMS} salas no TryHackMe</strong>, somando mais de {LAB_HOURS} horas de laboratório.
+            No <a href={htb}>HackTheBox</a>, estou no rank Pro Hacker e já cheguei ao <strong>top 80 do ranking brasileiro</strong>, além de disputar as temporadas competitivas.
             No <a href={thm}>TryHackMe</a>, estou entre os <strong>2% melhores do mundo</strong>.
-            Também resolvi {aiLabs} desafios das trilhas Advanced e Expert do Arkx AI Red-Team CTF, focado em ataques a agentes de IA.
+            Também resolvi {aiLabs} desafios das trilhas Advanced e Expert do Arkx AI Red-Team CTF, voltado a ataques contra agentes de IA.
           </p>
           <p>
-            Tenho pós-graduação em Red Team e <a href={lp(lang, '/certs/')}>{n} certificações práticas de segurança ofensiva</a>.
-            Falo português, inglês, espanhol e japonês (日本語). Fale comigo em <a href={mail}>{SITE.email}</a>.
+            Sou pós-graduado em Red Team e tenho <a href={lp(lang, '/certs/')}>{n} certificações práticas em segurança ofensiva</a>.
+            Falo português, inglês, espanhol e japonês (日本語). Para falar comigo, escreva para <a href={mail}>{SITE.email}</a>.
           </p>
         </>
       ) : (
@@ -126,10 +123,9 @@ const career = pt
           <>
             <h2>Regras de <em>engajamento</em></h2>
             <p>
-              Só testo sistemas com autorização por escrito do responsável. Achados de clientes nunca são publicados.
-              Os writeups aqui cobrem máquinas aposentadas do HackTheBox e plataformas de laboratório; writeups de
-              máquinas ativas ficam selados. Vulnerabilidades em projetos open source só são divulgadas depois que
-              os mantenedores publicam a correção.
+              Só testo sistemas com autorização por escrito do responsável, e achados de clientes nunca são publicados.
+              Os writeups deste site cobrem máquinas já aposentadas do HackTheBox e plataformas de laboratório; os de máquinas ativas ficam protegidos por senha.
+              Vulnerabilidades em projetos open source só são divulgadas depois que os mantenedores publicam a correção.
             </p>
           </>
         ) : (

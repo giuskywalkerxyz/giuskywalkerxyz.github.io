@@ -33,7 +33,6 @@ const dict = {
     'meta.title': 'Giulliano Amaral — Offensive Security',
     'meta.description':
       'Giulliano Amaral — penetration tester and offensive security researcher. Web, API, Active Directory and AI/LLM security assessments, plus writeups and research.',
-    'brand.tag': 'offensive security',
     'nav.services': 'services',
     'nav.writeups': 'writeups',
     'nav.ai': 'ai security',
@@ -71,7 +70,6 @@ const dict = {
     'meta.title': 'Giulliano Amaral — Segurança Ofensiva',
     'meta.description':
       'Giulliano Amaral — pentester e pesquisador de segurança ofensiva. Testes de intrusão em aplicações web, APIs, Active Directory e sistemas de IA/LLM, além de writeups e pesquisa.',
-    'brand.tag': 'segurança ofensiva',
     'nav.services': 'serviços',
     'nav.writeups': 'writeups',
     'nav.ai': 'segurança de IA',

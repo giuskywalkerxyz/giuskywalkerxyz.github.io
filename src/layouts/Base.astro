@@ -44,7 +44,10 @@ const ptPath = lang === 'pt' ? Astro.url.pathname : alt.href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <title>{pageTitle}</title>
+    <link rel="icon" href="/favicon.ico" sizes="48x48" />
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <meta property="og:image" content={new URL('/og-image.png', Astro.site)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
     <link
@@ -56,9 +59,8 @@ const ptPath = lang === 'pt' ? Astro.url.pathname : alt.href;
     <a class="skip" href="#main">{t('skip')}</a>
     <header class="topbar">
       <div class="wrap">
-        <a class="brand" href={lp(lang, '/')}>
-          <span class="brand__name">Giulliano Amaral</span>
-          <span class="brand__tag">{t('brand.tag')}</span>
+        <a class="brand" href={lp(lang, '/')} aria-label="Giulliano Amaral — home" title="Giulliano Amaral">
+          <img class="brand__logo" src={lang === 'pt' ? '/logo-pt.svg' : '/logo-en.svg'} alt="Giulliano Amaral" width="221" height="62" />
         </a>
         <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav" data-open={t('nav.close')} data-closed={t('nav.menu')}>{t('nav.menu')}</button>
         <nav class="nav" id="site-nav" aria-label={t('nav.main')}>

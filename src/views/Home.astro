@@ -29,8 +29,6 @@ const c = pt
       read: 'ou leia os writeups',
       foot: 'Web · APIs · Active Directory · IA/LLM · Pesquisa em software open source',
       foot2: '// adversário autorizado',
-      stats: ['certificações ofensivas', 'writeups de máquinas', 'labs de red team em IA', 'artigos de pesquisa'],
-      glance: 'Em números',
       whyK: './why --pentest',
       punchH: 'Por que contratar <em>um pentest?</em>',
       punchP: 'Porque alguém vai testar a segurança da sua empresa. A única pergunta é se vai ser alguém contratado por você, ou um atacante.',
@@ -76,8 +74,6 @@ const c = pt
       read: 'or read the writeups',
       foot: 'Web · APIs · Active Directory · AI/LLM · OSS vulnerability research',
       foot2: '// authorized adversary',
-      stats: ['offensive certifications', 'machine writeups', 'AI red-team labs solved', 'research articles'],
-      glance: 'At a glance',
       whyK: './why --pentest',
       punchH: 'Why hire <em>a pentest?</em>',
       punchP: "Because someone is going to test your company's security. The only question is whether it's someone you hired, or an attacker.",
@@ -117,7 +113,6 @@ const c = pt
       certBtn: 'Details',
     };
 
-const stats = [certs.length, writeups.length, ai.length, articles.length].map((n, i) => ({ n, l: c.stats[i] }));
 
 const htbRows = writeups.slice(0, 3).map((w) => ({ href: lp(lang, `/writeups/${w.id}/`), date: w.data.date, title: w.data.machine, summary: w.data.summary, tags: [w.data.platform, w.data.difficulty, w.locked ? c.sealed : c.retired] }));
 const aiRows = ai.slice(0, 2).map((w) => ({ href: lp(lang, `/ai/${w.id}/`), date: w.data.date, title: w.data.title, summary: w.data.summary, tags: [pt ? 'IA/LLM' : 'AI/LLM', w.data.severity] }));
@@ -131,7 +126,7 @@ const latest = [...htbRows, ...aiRows].sort((a, b) => +b.date - +a.date || a.tit
         <p class="hero__prompt">$ whoami<span class="cursor" aria-hidden="true"></span></p>
         <h1 set:html={c.h1} />
         <p class="hero__roles">{c.roles.map((r, i) => <>{i > 0 && <span>/</span>}{r}</>)}</p>
-        <p class="hero__lede">{c.lede}</p>
+        <p class="hero__lede" set:html={c.lede.replace('Giulliano Amaral', `<a class="namelink" href="${lp(lang, '/about/')}">Giulliano Amaral</a>`)} />
         <div class="btnrow">
           <a class="btn btn--primary" href={lp(lang, '/pentest/#scope')}>{t('cta.scope')}</a>
           <a class="btn" href={bookingHref(lang)}>{t('cta.book')}</a>
@@ -145,11 +140,6 @@ const latest = [...htbRows, ...aiRows].sort((a, b) => +b.date - +a.date || a.tit
     </div>
   </section>
 
-  <section class="stats" aria-label={c.glance}>
-    {stats.map((s) => (
-      <div class="stat"><div class="stat__n">{s.n}</div><div class="stat__l">{s.l}</div></div>
-    ))}
-  </section>
 
   <section class="section" id="why">
     <div class="punch">

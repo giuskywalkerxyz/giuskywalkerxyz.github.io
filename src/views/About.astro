@@ -9,6 +9,15 @@ const lang = langOf(Astro.url.pathname);
 const pt = lang === 'pt';
 const n = (await getCollection('certifications', (c) => c.data.status === 'earned')).length;
 const yt = SOCIALS.find((s) => s.label === 'YouTube')!.href;
+const htb = SOCIALS.find((s) => s.label === 'HackTheBox')!.href;
+const thm = SOCIALS.find((s) => s.label === 'TryHackMe')!.href;
+// CTF stats, from the public profiles on 2026-11-22. Hours: TryHackMe's own estimated time
+// per completed room (~119 h) + HTB machines at ~3/6/10/16 h for Easy/Medium/Hard/Insane
+// (26/12/4/1 → ~206 h). Update these when the profiles change.
+const HTB_MACHINES = 43;
+const THM_ROOMS = 138;
+const LAB_HOURS = 300;
+const aiLabs = (await getCollection('ai', (e) => !e.data.draft)).length;
 const mail = `mailto:${SITE.email}`;
 
 const career = pt
@@ -51,8 +60,14 @@ const career = pt
           <p>
             Meu foco são <strong>aplicações web e APIs</strong>, <strong>Active Directory</strong> e, cada vez
             mais, <strong>sistemas de IA/LLM</strong> e os agentes construídos sobre eles. Fora dos projetos,
-            caço bugs em software open source, resolvo máquinas do HackTheBox e publico o que aprendo aqui e
-            no <a href={yt}>YouTube</a>.
+            caço bugs em software open source e publico o que aprendo aqui e no <a href={yt}>YouTube</a>.
+          </p>
+          <p>
+            Mantenho a técnica afiada com CTFs: <strong>{HTB_MACHINES} máquinas no HackTheBox</strong> e <strong>{THM_ROOMS} salas no TryHackMe</strong>, mais de {LAB_HOURS} horas de laboratório prático.
+            No <a href={htb}>HackTheBox</a>, cheguei ao <strong>top 80 do
+            ranking brasileiro</strong>, com o rank Pro Hacker, e jogo as temporadas competitivas.
+            No <a href={thm}>TryHackMe</a>, estou entre os <strong>2% melhores do mundo</strong>.
+            Também resolvi {aiLabs} desafios das trilhas Advanced e Expert do Arkx AI Red-Team CTF, focado em ataques a agentes de IA.
           </p>
           <p>
             Tenho pós-graduação em Red Team e <a href={lp(lang, '/certs/')}>{n} certificações práticas de segurança ofensiva</a>.
@@ -70,8 +85,14 @@ const career = pt
           <p>
             My work focuses on <strong>web applications and APIs</strong>, <strong>Active Directory</strong>
             and, increasingly, <strong>AI/LLM systems</strong> and the agents built on them. Outside client work
-            I hunt bugs in open-source software, solve HackTheBox machines and publish what I learn here and
-            on <a href={yt}>YouTube</a>.
+            I hunt bugs in open-source software and publish what I learn here and on <a href={yt}>YouTube</a>.
+          </p>
+          <p>
+            I keep my skills sharp with CTFs: <strong>{HTB_MACHINES} HackTheBox machines</strong> and <strong>{THM_ROOMS} TryHackMe rooms</strong>, more than {LAB_HOURS} hours of hands-on labs.
+            On <a href={htb}>HackTheBox</a> I've reached the <strong>top 80 in
+            Brazil</strong>, at the Pro Hacker rank, and I play the competitive seasons.
+            On <a href={thm}>TryHackMe</a> I'm in the <strong>top 2% worldwide</strong>.
+            I also solved {aiLabs} Advanced and Expert challenges in the Arkx AI Red-Team CTF, which focuses on attacking AI agents.
           </p>
           <p>
             I hold a postgraduate degree in Red Team operations and <a href={lp(lang, '/certs/')}>{n} hands-on offensive certifications</a>.

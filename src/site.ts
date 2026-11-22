@@ -8,7 +8,7 @@ export const SITE = {
   location: 'Rio de Janeiro, Brazil',
   email: 'giuskywalker@pm.me',
   // Booking link (Cal.com / Calendly). Empty = "Book a call" falls back to an e-mail request.
-  bookingUrl: '',
+  bookingUrl: 'https://cal.com/giullianoamaral',
 };
 
 export const SOCIALS = [

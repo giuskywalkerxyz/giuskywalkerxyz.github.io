@@ -44,9 +44,9 @@ const ptPath = lang === 'pt' ? Astro.url.pathname : alt.href;
     <meta property="og:description" content={description} />
     <meta property="og:url" content={canonical} />
     <title>{pageTitle}</title>
-    <link rel="icon" href="/favicon.ico" sizes="48x48" />
-    <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
-    <link rel="apple-touch-icon" href="/apple-touch-icon.png" />
+    <link rel="icon" href="/favicon.ico?v=4" sizes="16x16 32x32 48x48" type="image/x-icon" />
+    <link rel="shortcut icon" href="/favicon.ico?v=4" />
+    <link rel="apple-touch-icon" href="/apple-touch-icon.png?v=4" />
     <meta property="og:image" content={new URL('/og-image.png', Astro.site)} />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />

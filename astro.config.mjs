@@ -7,7 +7,8 @@ export default defineConfig({
   site: 'https://giuskywalkerxyz.github.io',
   markdown: {
     shikiConfig: {
-      theme: 'tokyo-night',
+      themes: { light: 'github-light', dark: 'github-dark-dimmed' },
+      defaultColor: false,
       wrap: true,
     },
   },

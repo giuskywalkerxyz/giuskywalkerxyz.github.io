@@ -2,47 +2,58 @@
 import Base from '../../layouts/Base.astro';
 import { getCollection } from 'astro:content';
 import { byDateDesc } from '../../lib/sortByDate';
+import { fmtDate } from '../../site';
 
 const pub = (await getCollection('writeups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: false }));
 const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: true }));
-
 const all = [...pub, ...prot].sort(byDateDesc);
-
-const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
 ---
-<Base title="writeups — giuskywalker.sh" active="writeups" description="HackTheBox writeups. Retired boxes are open; active boxes are sealed with the root flag.">
-  <section class="article__head" style="padding-top:36px;">
-    <p class="article__kicker">// target log</p>
-    <h1>Writeups</h1>
-    <p class="muted" style="max-width:66ch;">
-      End-to-end writeups of boxes I've owned. <strong>Retired</strong> machines are open.
-      <strong>Active-season</strong> machines are 🔒 <strong>sealed</strong>: the full writeup is
-      AES-256-GCM encrypted and <strong>password-protected</strong> — the attack chain on a live box
-      is the spoiler, so it isn't published in the open.
+<Base title="Writeups" active="writeups" description="HackTheBox writeups. Retired machines are public; active machines are sealed until they retire.">
+  <header class="pagehead">
+    <p class="kicker">ls -t writeups/</p>
+    <h1>Machine <em>writeups</em></h1>
+    <p class="lede">
+      End-to-end attack chains from HackTheBox. Retired machines are public. Writeups for
+      active-season machines are sealed (AES-256-GCM, decrypted in the browser) because the chain
+      itself is the spoiler. For AI agent exploitation labs, see <a class="textlink" href="/ai/">AI security</a>.
     </p>
-  </section>
+  </header>
 
-  <section class="section" style="margin-top:28px;">
-    <div class="cards">
-      {all.map((w) => (
-        <a class="card" href={`/writeups/${w.id}/`}>
-          <div class="card__top">
-            <span class="card__title">{w.locked && <span title="sealed — unlock with the root flag">🔒 </span>}{w.data.machine}</span>
-            <span class={diffClass(w.data.difficulty)}>{w.data.difficulty}</span>
-            {w.data.points && <span class="badge badge--pts">+{w.data.points} pts</span>}
-            {w.locked && <span class="badge" style="color:var(--crawl);border-color:rgba(255,176,32,0.4);">active · sealed</span>}
-          </div>
-          <p class="card__summary">{w.data.summary}</p>
-          <div class="card__meta">
-            <span>{w.data.platform}</span><span>·</span>
-            <span>{w.data.os}</span>
-            {w.data.season && <><span>·</span><span>{w.data.season}</span></>}
-            <span>·</span>
-            <span>{w.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-          </div>
-        </a>
-      ))}
-      {all.length === 0 && <p class="muted">No writeups published yet.</p>}
-    </div>
-  </section>
+  <div class="tabs" role="group" aria-label="Filter writeups">
+    <button type="button" data-f="all" aria-pressed="true">All · {all.length}</button>
+    <button type="button" data-f="open" aria-pressed="false">Retired · {pub.length}</button>
+    <button type="button" data-f="sealed" aria-pressed="false">Active, sealed · {prot.length}</button>
+  </div>
+
+  <div class="rows" id="wu-rows">
+    {all.map((w) => (
+      <a class="row" href={`/writeups/${w.id}/`} data-k={w.locked ? 'sealed' : 'open'}>
+        <span class="row__date">{fmtDate(w.data.date)}</span>
+        <div>
+          <div class="row__title">{w.data.machine}</div>
+          <p class="row__summary">{w.data.summary}</p>
+        </div>
+        <div class="row__meta">
+          <span class={`badge badge--${w.data.difficulty.toLowerCase()}`}>{w.data.difficulty}</span>
+          <span class="tag">{w.data.os}</span>
+          {w.locked ? <span class="badge badge--solid">sealed</span> : <span class="tag">retired</span>}
+        </div>
+      </a>
+    ))}
+    {all.length === 0 && <p class="empty">No writeups published yet.</p>}
+  </div>
+
+  <script is:inline>
+    (function () {
+      var btns = document.querySelectorAll('.tabs button');
+      var rows = document.querySelectorAll('#wu-rows .row');
+      btns.forEach(function (b) {
+        b.addEventListener('click', function () {
+          var f = b.getAttribute('data-f');
+          btns.forEach(function (x) { x.setAttribute('aria-pressed', x === b ? 'true' : 'false'); });
+          rows.forEach(function (r) { r.style.display = f === 'all' || r.getAttribute('data-k') === f ? '' : 'none'; });
+        });
+      });
+    })();
+  </script>
 </Base>

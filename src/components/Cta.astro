@@ -1,0 +1,18 @@
+---
+import { bookingHref, mailto } from '../site';
+---
+<section class="cta" aria-labelledby="cta-h">
+  <div>
+    <p class="kicker">./contact --scope yours</p>
+    <h2 id="cta-h">Have something <em>in scope?</em></h2>
+    <p>
+      Tell me about the target, the environment and your timeline. I'll come back with questions
+      and a proposed approach. Testing only starts with written authorization.
+    </p>
+  </div>
+  <div class="btnrow">
+    <a class="btn btn--primary" href="/pentest/#scope">Scope a pentest</a>
+    <a class="btn" href={bookingHref()}>Book a call</a>
+    <a class="btn" href={mailto('Engagement inquiry')}>E-mail</a>
+  </div>
+</section>

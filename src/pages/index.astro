@@ -1,143 +1,176 @@
 ---
 import Base from '../layouts/Base.astro';
-import Prompt from '../components/Prompt.astro';
+import AttackGraph from '../components/AttackGraph.astro';
+import Cta from '../components/Cta.astro';
 import { getCollection } from 'astro:content';
 import { byDateDesc } from '../lib/sortByDate';
+import { bookingHref, fmtDate } from '../site';
 
 const pub = (await getCollection('writeups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: false }));
 const prot = (await getCollection('protectedWriteups', (e) => !e.data.draft)).map((e) => ({ ...e, locked: true }));
 const writeups = [...pub, ...prot].sort(byDateDesc);
-const articles = (await getCollection('articles', (e) => !e.data.draft))
-  .sort(byDateDesc);
-const aiWriteups = (await getCollection('ai', (e) => !e.data.draft)).sort(
+const ai = (await getCollection('ai', (e) => !e.data.draft)).sort(byDateDesc);
+const articles = (await getCollection('articles', (e) => !e.data.draft)).sort(byDateDesc);
+const cves = (await getCollection('cves', (e) => !e.data.draft)).sort(byDateDesc);
+const certs = (await getCollection('certifications', (c) => c.data.status === 'earned')).sort(
   (a, b) => a.data.order - b.data.order
 );
 
-const latestWriteups = writeups.slice(0, 4);
-const latestArticles = articles.slice(0, 3);
-const latestAi = aiWriteups.slice(0, 4);
+const stats = [
+  { n: certs.length, l: 'offensive certifications' },
+  { n: writeups.length, l: 'machine writeups' },
+  { n: ai.length, l: 'AI red-team labs solved' },
+  { n: articles.length, l: 'research articles' },
+];
 
-const diffClass = (d: string) => `badge badge--${d.toLowerCase()}`;
-const sevClass = (sv: string) => `badge badge--${sv.toLowerCase()}`;
+const services = [
+  {
+    t: 'Web & API pentest',
+    d: 'Manual testing of web applications and APIs, beyond what scanners report: access control, business logic and the way components chain together.',
+    i: ['OWASP Top 10 / API Top 10', 'Authn, authz & IDOR', 'Business-logic abuse'],
+  },
+  {
+    t: 'Internal & Active Directory',
+    d: 'Assume-breach assessments that start from a foothold and map the realistic path to domain compromise.',
+    i: ['AD attack paths', 'Credential & Kerberos abuse', 'Lateral movement'],
+  },
+  {
+    t: 'AI / LLM red teaming',
+    d: 'Adversarial testing of LLM apps and agents: prompt injection, tool abuse and trust boundaries between agents.',
+    i: ['OWASP LLM Top 10', 'Agent & MCP tool abuse', 'Data-exfiltration paths'],
+  },
+];
+
+const htbRows = writeups.slice(0, 3).map((w) => ({ href: `/writeups/${w.id}/`, date: w.data.date, title: w.data.machine, summary: w.data.summary, tags: [w.data.platform, w.data.difficulty, w.locked ? 'sealed' : 'retired'] }));
+const aiRows = ai.slice(0, 2).map((w) => ({ href: `/ai/${w.id}/`, date: w.data.date, title: w.data.title, summary: w.data.summary, tags: ['AI/LLM', w.data.severity] }));
+const latest = [...htbRows, ...aiRows].sort((a, b) => +b.date - +a.date || a.title.localeCompare(b.title));
 ---
-<Base title="giuskywalker.sh — hacker's holocron" active="home">
+<Base active="home">
   <section class="hero">
-    <p class="hero__crawl">A long time ago in a subnet far, far away…</p>
-    <h1>I break into machines<br />and write down <span class="accent">how</span>.</h1>
-    <p class="lede">
-      Cybersecurity Lead by day, HackTheBox operative by night. This is my holocron:
-      full writeups of retired boxes, security research, and field notes from the dark side.
-    </p>
-    <div class="btnrow">
-      <a class="btn btn--saber" href="/writeups/">⟶ enter the archive</a>
-      <a class="btn" href="/about/">whoami</a>
-    </div>
-  </section>
-
-  <section class="section">
-    <div class="term">
-      <div class="term__bar">
-        <span class="term__dot dot-r"></span>
-        <span class="term__dot dot-y"></span>
-        <span class="term__dot dot-g"></span>
-        <span class="term__title">giuskywalker@death-star: ~</span>
-      </div>
-      <div class="term__body">
-        <Prompt cmd="whoami" />
-        <div class="whoami" style="margin-top:16px;">
-          <img
-            class="whoami__avatar"
-            src="/avatar.webp"
-            alt="giuskywalker avatar"
-            width="128"
-            height="128"
-            loading="lazy"
-          />
-          <div class="whoami__body">
-            <p class="whoami__name">Giulliano Amaral <span class="handle">· giuskywalker</span></p>
-            <p class="whoami__role">Offensive security · red teaming · bug bounty</p>
-            <div class="profile">
-              <div class="kv"><span class="k">age</span><span class="v">23</span></div>
-              <div class="kv"><span class="k">location</span><span class="v">Rio de Janeiro, Brazil</span></div>
-              <div class="kv"><span class="k">education</span><span class="v">Postgrad — Red Team</span></div>
-              <div class="kv"><span class="k">email</span><span class="v"><a class="saber" href="mailto:giuskywalker@proton.me">giuskywalker@proton.me</a></span></div>
-            </div>
-            <div class="whoami__socials">
-              <a class="btn" href="https://www.linkedin.com/in/giulliano-amaral/">linkedin ⟶</a>
-              <a class="btn" href="https://github.com/giuskywalkerxyz">github ⟶</a>
-              <a class="btn" href="https://app.hackthebox.com/users/768648">hackthebox ⟶</a>
-              <a class="btn" href="https://tryhackme.com/p/giuskywalker">tryhackme ⟶</a>
-            </div>
-          </div>
+    <div class="hero__grid">
+      <AttackGraph />
+      <div>
+        <p class="hero__prompt">$ whoami<span class="cursor" aria-hidden="true"></span></p>
+        <h1>I break in, <em>so others can't.</em></h1>
+        <p class="hero__roles">Pentest<span>/</span>Red team<span>/</span>Offensive security<span>/</span>Vuln research</p>
+        <p class="hero__lede">
+          I'm Giulliano Amaral, a penetration tester and security researcher. I find the paths an attacker
+          would take through your applications, networks and AI systems, then document them clearly enough
+          for your team to close them.
+        </p>
+        <div class="btnrow">
+          <a class="btn btn--primary" href="/pentest/#scope">Scope a pentest</a>
+          <a class="btn" href={bookingHref()}>Book a call</a>
+          <a class="textlink" href="/writeups/">or read the writeups</a>
         </div>
       </div>
     </div>
+    <div class="hero__foot">
+      <span>Web · APIs · Active Directory · AI/LLM · OSS vulnerability research</span>
+      <span class="muted">// authorized adversary</span>
+    </div>
   </section>
 
-  <section class="section">
-    <h2 class="section__h">latest writeups</h2>
-    <div class="cards">
-      {latestWriteups.map((w) => (
-        <a class="card" href={`/writeups/${w.id}/`}>
-          <div class="card__top">
-            <span class="card__title">{w.locked && <span title="sealed — unlock with the root flag">🔒 </span>}{w.data.machine}</span>
-            <span class={diffClass(w.data.difficulty)}>{w.data.difficulty}</span>
-            {w.data.points && <span class="badge badge--pts">+{w.data.points} pts</span>}
-            {w.locked && <span class="badge" style="color:var(--crawl);border-color:rgba(255,176,32,0.4);">active · sealed</span>}
-          </div>
-          <p class="card__summary">{w.data.summary}</p>
-          <div class="card__meta">
-            <span>{w.data.platform}</span><span>·</span>
-            <span>{w.data.os}</span>
-            {w.data.season && <><span>·</span><span>{w.data.season}</span></>}
-          </div>
+  <section class="stats" aria-label="At a glance">
+    {stats.map((s) => (
+      <div class="stat"><div class="stat__n">{s.n}</div><div class="stat__l">{s.l}</div></div>
+    ))}
+  </section>
+
+  <section class="section" id="services">
+    <div class="section__head">
+      <div>
+        <p class="kicker">cat services.txt</p>
+        <h2>What I <em>test</em></h2>
+        <p>Every engagement is manual, scoped in writing, and ends with a report your developers can act on: reproducible steps, impact and fixes.</p>
+      </div>
+      <a class="btn btn--ghost" href="/pentest/">How engagements work</a>
+    </div>
+    <div class="services">
+      {services.map((s, i) => (
+        <article class="service">
+          <div class="service__n">0{i + 1}</div>
+          <h3>{s.t}</h3>
+          <p>{s.d}</p>
+          <ul>{s.i.map((x) => <li>{x}</li>)}</ul>
+        </article>
+      ))}
+    </div>
+  </section>
+
+  {cves.length > 0 && (
+    <section class="section" id="disclosures">
+      <div class="section__head">
+        <div>
+          <p class="kicker">cat disclosures.log</p>
+          <h2>Disclosed <em>vulnerabilities</em></h2>
+        </div>
+        <a class="btn btn--ghost" href="/cves/">All disclosures</a>
+      </div>
+      <div class="rows">
+        {cves.map((c) => (
+          <a class="row" href={`/cves/${c.id}/`}>
+            <span class="row__date">{c.data.cve}</span>
+            <div><div class="row__title">{c.data.title}</div><p class="row__summary">{c.data.vendor} / {c.data.product}</p></div>
+            <div class="row__meta"><span class={`badge badge--${c.data.severity.toLowerCase()}`}>{c.data.severity}</span></div>
+          </a>
+        ))}
+      </div>
+    </section>
+  )}
+
+  <section class="section" id="writeups">
+    <div class="section__head">
+      <div>
+        <p class="kicker">ls -t writeups/</p>
+        <h2>Recent <em>writeups</em></h2>
+        <p>End-to-end attack chains from HackTheBox machines and AI red-team labs. Active machines stay sealed until they retire.</p>
+      </div>
+      <a class="btn btn--ghost" href="/writeups/">All writeups</a>
+    </div>
+    <div class="rows">
+      {latest.map((w) => (
+        <a class="row" href={w.href}>
+          <span class="row__date">{fmtDate(w.date)}</span>
+          <div><div class="row__title">{w.title}</div><p class="row__summary">{w.summary}</p></div>
+          <div class="row__meta">{w.tags.map((t) => <span class="tag">{t}</span>)}</div>
         </a>
       ))}
-      {latestWriteups.length === 0 && <p class="muted">No writeups published yet.</p>}
     </div>
-    <p style="margin-top:16px;"><a class="btn" href="/writeups/">all writeups ⟶</a></p>
   </section>
 
-  {latestAi.length > 0 && (
-    <section class="section">
-      <h2 class="section__h">ai / llm writeups</h2>
-      <div class="cards">
-        {latestAi.map((w) => (
-          <a class="card" href={`/ai/${w.id}/`}>
-            <div class="card__top">
-              <span class="card__title">{w.data.title.replace(/^Arkx — /, '')}</span>
-              <span class={sevClass(w.data.severity)}>{w.data.severity}</span>
-            </div>
-            <p class="card__summary">{w.data.summary}</p>
-            <div class="card__meta">
-              <span>{w.data.platform}</span><span>·</span>
-              <span>{w.data.track}</span><span>·</span>
-              <span>{w.data.vuln}</span>
-            </div>
-          </a>
-        ))}
+  <section class="section" id="articles">
+    <div class="section__head">
+      <div>
+        <p class="kicker">ls articles/</p>
+        <h2>Research &amp; <em>articles</em></h2>
       </div>
-      <p style="margin-top:16px;"><a class="btn" href="/ai/">all ai writeups ⟶</a></p>
-    </section>
-  )}
+      <a class="btn btn--ghost" href="/articles/">All articles</a>
+    </div>
+    <div class="rows">
+      {articles.slice(0, 4).map((a) => (
+        <a class="row" href={`/articles/${a.id}/`}>
+          <span class="row__date">{fmtDate(a.data.date)}</span>
+          <div><div class="row__title">{a.data.title}</div><p class="row__summary">{a.data.summary}</p></div>
+          <div class="row__meta">{a.data.tags.slice(0, 2).map((t) => <span class="tag">{t}</span>)}</div>
+        </a>
+      ))}
+    </div>
+  </section>
 
-  {latestArticles.length > 0 && (
-    <section class="section">
-      <h2 class="section__h">from the logbook</h2>
-      <div class="cards">
-        {latestArticles.map((a) => (
-          <a class="card" href={`/articles/${a.id}/`}>
-            <div class="card__top">
-              <span class="card__title">{a.data.title}</span>
-            </div>
-            <p class="card__summary">{a.data.summary}</p>
-            <div class="card__meta">
-              <span>{a.data.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
-              {a.data.tags.slice(0, 3).map((t) => <span class="tag">{t}</span>)}
-            </div>
-          </a>
-        ))}
+  <section class="section" id="certs">
+    <div class="section__head">
+      <div>
+        <p class="kicker">ls ~/certs</p>
+        <h2>Certifications</h2>
+        <p>Hands-on, lab-based exams covering pentest, red team, Active Directory, web, API and AI security.</p>
       </div>
-    </section>
-  )}
+      <a class="btn btn--ghost" href="/certs/">Details</a>
+    </div>
+    <div class="certstrip">
+      {certs.map((c) => <a href={`/certs/#${c.id}`} title={c.data.name}>{c.data.code}</a>)}
+    </div>
+  </section>
+
+  <Cta />
 </Base>

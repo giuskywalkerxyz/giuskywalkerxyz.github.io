@@ -1,72 +1,77 @@
 ---
 import Base from '../layouts/Base.astro';
-import Prompt from '../components/Prompt.astro';
+import Cta from '../components/Cta.astro';
 import { getCollection } from 'astro:content';
+import { SITE, SOCIALS } from '../site';
 
 const certs = (await getCollection('certifications', (c) => c.data.status === 'earned'))
   .sort((a, b) => a.data.order - b.data.order)
   .map((c) => c.data.code);
+
 const career = [
-  { when: '2026 — now', what: 'Cybersecurity Lead · Sietch.tech', note: 'Leads the pentest team and owns the security infrastructure.' },
-  { when: '2025 — 2026', what: 'SOC Analyst · iT.eam', note: 'Detection, triage and incident response.' },
-  { when: 'earlier', what: 'NOC Analyst · K2 Telecom', note: 'Network operations & monitoring.' },
-  { when: 'ongoing', what: 'Bug bounty hunter · Intigriti', note: 'Web & application security research.' },
+  { when: 'Nov 2026 — now', what: 'Independent security researcher', note: 'Penetration testing engagements, bug bounty and open-source vulnerability research.' },
+  { when: '2026', what: 'Cybersecurity Lead · Sietch.tech', note: 'Led the pentest team and owned the security infrastructure.' },
+  { when: '2025 — 2026', what: 'SOC Analyst · iT.eam', note: 'Detection engineering, alert triage and incident response.' },
+  { when: 'Earlier', what: 'NOC Analyst · K2 Telecom', note: 'Network operations and monitoring.' },
 ];
 ---
-<Base title="about — giuskywalker.sh" active="about" description="whoami — Giulliano Amaral, Cybersecurity Lead.">
-  <section class="article" style="padding-top:36px;">
-    <div class="term">
-      <div class="term__bar">
-        <span class="term__dot dot-r"></span>
-        <span class="term__dot dot-y"></span>
-        <span class="term__dot dot-g"></span>
-        <span class="term__title">giuskywalker@death-star: ~/about</span>
-      </div>
-      <div class="term__body">
-        <Prompt cmd="whoami" />
-        <p style="margin:10px 0 24px;">
-          <span class="saber">Giulliano Amaral</span> — a.k.a. <strong>giuskywalker</strong>.
-          Cybersecurity Lead, offensive-security practitioner and HackTheBox grinder.
-          I serve the dark side of the Force: breaking things on purpose, then
-          writing down exactly how so others can learn the craft.
-        </p>
+<Base title="About" active="about" description="About Giulliano Amaral — penetration tester and offensive security researcher based in Rio de Janeiro.">
+  <header class="pagehead">
+    <p class="kicker">whoami</p>
+    <h1>Giulliano <em>Amaral</em></h1>
+  </header>
 
-        <Prompt cmd="cat ./profile.json" />
-        <div class="profile" style="margin-top:12px;">
-          <div class="kv"><span class="k">role</span><span class="v">Cybersecurity Lead @ Sietch.tech</span></div>
-          <div class="kv"><span class="k">focus</span><span class="v">Pentest · Red Team · Bug Bounty · SOC</span></div>
-          <div class="kv"><span class="k">certs</span><span class="v"><a class="saber" href="/certs/">{certs.join(' · ')}</a></span></div>
-          <div class="kv"><span class="k">platforms</span><span class="v">HackTheBox · Intigriti</span></div>
-          <div class="kv"><span class="k">github</span><span class="v"><a class="saber" href="https://github.com/giuskywalkerxyz">github.com/giuskywalkerxyz</a></span></div>
-        </div>
+  <section class="about">
+    <img class="about__photo" src="/portrait.jpg" alt="Portrait of Giulliano Amaral" width="560" height="750" />
+    <div class="about__body">
+      <p>
+        I'm a <strong>penetration tester and offensive security researcher</strong> based in Rio de Janeiro.
+        I've worked on both sides: in a SOC, triaging alerts and responding to incidents, and as the lead
+        of a pentest team. Having seen how attacks look from the defender's seat shapes how I test and
+        how I write findings up.
+      </p>
+      <p>
+        My work focuses on <strong>web applications and APIs</strong>, <strong>Active Directory</strong>
+        and, increasingly, <strong>AI/LLM systems</strong> and the agents built on them. Outside client work
+        I hunt bugs in open-source software, solve HackTheBox machines and publish what I learn here and
+        on <a href={SOCIALS.find((s) => s.label === 'YouTube')!.href}>YouTube</a>.
+      </p>
+      <p>
+        I hold a postgraduate degree in Red Team operations and <a href="/certs/">{certs.length} hands-on
+        offensive certifications</a>. I speak Portuguese, English, Spanish and Japanese (日本語).
+        You can reach me at <a href={`mailto:${SITE.email}`}>{SITE.email}</a>.
+      </p>
+      <div class="btnrow" style="margin-top:24px;">
+        {SOCIALS.map((s) => <a class="btn btn--ghost btn--sm" href={s.href} rel="me noopener" target="_blank">{s.label} ↗</a>)}
       </div>
     </div>
+  </section>
 
-    <section class="section">
-      <h2 class="section__h">service record</h2>
-      <div class="cards">
-        {career.map((c) => (
-          <div class="card" style="cursor:default;">
-            <div class="card__top">
-              <span class="card__title" style="font-size:16px;">{c.what}</span>
-              <span class="badge">{c.when}</span>
-            </div>
-            <p class="card__summary" style="margin-bottom:0;">{c.note}</p>
-          </div>
-        ))}
-      </div>
-    </section>
+  <section class="section">
+    <div class="section__head"><div><p class="kicker">cat experience.log</p><h2>Experience</h2></div></div>
+    <div class="timeline">
+      {career.map((c) => (
+        <div class="tl">
+          <div class="tl__when">{c.when}</div>
+          <div><div class="tl__what">{c.what}</div><p class="tl__note">{c.note}</p></div>
+        </div>
+      ))}
+    </div>
+  </section>
 
-    <section class="section">
-      <h2 class="section__h">rules of engagement</h2>
-      <div class="prose">
+  <section class="section">
+    <div class="section__head">
+      <div>
+        <p class="kicker">cat ethics.md</p>
+        <h2>Rules of <em>engagement</em></h2>
         <p>
-          Everything on this site is for <strong>educational and authorized
-          security-testing</strong> purposes only. Flags and credentials are redacted.
-          Writeups cover <strong>retired</strong> HackTheBox machines — active-season boxes
-          are never published while the chain would spoil them.
+          I only test systems with written authorization from their owner. Client findings are never published.
+          The writeups here cover retired HackTheBox machines and lab platforms; writeups for active machines
+          are sealed. Vulnerabilities in open-source projects are disclosed only after the maintainers publish a fix.
         </p>
       </div>
-    </section>
+    </div>
   </section>
+
+  <Cta />
 </Base>

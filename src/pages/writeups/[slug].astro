@@ -1,6 +1,7 @@
 ---
 import Base from '../../layouts/Base.astro';
 import { getCollection, render } from 'astro:content';
+import { fmtDate } from '../../site';
 
 export async function getStaticPaths() {
   const pub = await getCollection('writeups', (e) => !e.data.draft);
@@ -20,19 +21,20 @@ if (kind === 'public') {
   Content = (await render(entry)).Content;
 }
 ---
-<Base title={`${d.machine} — writeup`} active="writeups" description={d.summary}>
+<Base title={`${d.machine} writeup`} active="writeups" description={d.summary}>
   <article class="article">
-    <div class="article__head">
-      <p class="article__kicker">// {d.platform} · writeup{kind === 'protected' ? ' · sealed' : ''}</p>
-      <h1>{kind === 'protected' && '🔒 '}{d.machine}</h1>
+    <header class="article__head">
+      <p class="kicker">{d.platform.toLowerCase()} · writeup{kind === 'protected' ? ' · sealed' : ''}</p>
+      <h1>{d.machine}</h1>
       <div class="article__meta">
         <span class={diffClass}>{d.difficulty}</span>
-        <span class="badge">{d.os}</span>
-        {d.points && <span class="badge badge--pts">+{d.points} pts</span>}
-        {d.season && <span class="badge">{d.season}</span>}
-        <span class="tag" style="margin-left:4px;">{d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</span>
+        <span class="tag">{d.os}</span>
+        {d.season && <span class="tag">{d.season}</span>}
+        {d.points && <span class="tag">+{d.points} pts</span>}
+        <span class="tag">{fmtDate(d.date)}</span>
+        {kind === 'protected' ? <span class="badge badge--solid">active · sealed</span> : <span class="tag">retired</span>}
       </div>
-    </div>
+    </header>
 
     {kind === 'public' && (
       <div class="prose"><Content /></div>
@@ -41,35 +43,23 @@ if (kind === 'public') {
     {kind === 'protected' && (
       <>
         <section id="gate" class="gate">
-          <div class="gate__lock" aria-hidden="true">🔒</div>
-          <h2 class="gate__title">Protected Report</h2>
-          <p class="gate__sub">
-            This writeup is for an <strong>active</strong> machine. The content is
-            AES-256-GCM encrypted — enter the password to decrypt it in your browser.
+          <p class="kicker">gpg --decrypt</p>
+          <h2>Sealed writeup</h2>
+          <p>
+            {d.machine} is still an <strong>active</strong> HackTheBox machine, so the attack chain isn't
+            published in the open. The writeup is AES-256-GCM encrypted and decrypted locally in your
+            browser with the access password. If you need access, get in touch.
           </p>
-
           <div class="gate__file">
-            <div class="gate__file-name">📄 HTB Writeup — {d.machine} · {d.season}</div>
-            <div class="gate__file-meta">Last updated: {d.date.toLocaleDateString('en-US', { year: 'numeric', month: 'short', day: 'numeric' })}</div>
+            <div>htb-{d.machine.toLowerCase()}.md.enc · {d.season}</div>
+            <div>last updated {fmtDate(d.date)}</div>
           </div>
-
-          <div class="gate__notice">
-            <strong>⚠ Active machine</strong>
-            <p>
-              This box is still active on HackTheBox, so the full solution isn't published in the
-              open — the chain itself is the spoiler. Access is <strong>password-protected</strong>;
-              if you need it, reach out.
-            </p>
-          </div>
-
           <form id="gate-form" class="gate__form" autocomplete="off">
             <label for="pw">Password</label>
             <input id="pw" type="password" placeholder="enter password" autocomplete="off" spellcheck="false" />
-            <button type="submit" class="btn btn--saber" style="width:100%;justify-content:center;">🔓 Unlock Report</button>
+            <button type="submit" class="btn btn--primary">Unlock writeup</button>
             <p id="gate-err" class="gate__err" role="alert"></p>
           </form>
-
-          <p style="margin-top:14px;"><a class="saber" href="/writeups/">⟵ back to all writeups</a></p>
         </section>
 
         <div id="report" class="prose" style="display:none;"></div>
@@ -110,7 +100,7 @@ if (kind === 'public') {
                 out.style.display = 'block';
                 out.scrollIntoView({ behavior: 'smooth' });
               } catch (err) {
-                errEl.textContent = '✗ Wrong password — decryption failed.';
+                errEl.textContent = 'Wrong password: decryption failed.';
                 input.value = '';
                 input.focus();
               }
@@ -120,11 +110,6 @@ if (kind === 'public') {
       </>
     )}
 
-    {kind === 'public' && (
-      <>
-        <hr class="prose" style="margin-top:40px;" />
-        <p class="muted"><a class="saber" href="/writeups/">⟵ back to all writeups</a></p>
-      </>
-    )}
+    <p class="article__back"><a class="textlink" href="/writeups/">← All writeups</a></p>
   </article>
 </Base>

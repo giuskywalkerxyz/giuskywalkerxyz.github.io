@@ -5,39 +5,29 @@ import { getCollection } from 'astro:content';
 const all = (await getCollection('ai', (e) => !e.data.draft)).sort(
   (a, b) => a.data.order - b.data.order || +a.data.date - +b.data.date
 );
-
-const sevClass = (s: string) => `badge badge--${s.toLowerCase()}`;
 ---
-<Base title="ai / llm — giuskywalker.sh" active="ai" description="AI & LLM security CTF writeups — agent exploitation: prompt injection, tool RCE, MCP abuse, multi-agent privilege escalation.">
-  <section class="article__head" style="padding-top:36px;">
-    <p class="article__kicker">// agent exploitation</p>
-    <h1>AI / LLM Writeups</h1>
-    <p class="muted" style="max-width:68ch;">
-      Breaking <strong>AI agents</strong>, not boxes. Writeups from AI red-team CTFs —
-      tool-level RCE, MCP abuse, multi-agent trust boundaries, and the business-logic
-      failures that show up once an LLM is holding the tools. First drop:
-      the <strong>Arkx</strong> AI Red-Team CTF (Advanced &amp; Expert tracks).
+<Base title="AI security" active="ai" description="AI & LLM security writeups: prompt injection, tool-level RCE, MCP abuse and multi-agent privilege escalation.">
+  <header class="pagehead">
+    <p class="kicker">ls writeups/ai/</p>
+    <h1>AI &amp; LLM <em>security</em></h1>
+    <p class="lede">
+      Attacking AI agents rather than hosts: tool-level RCE, MCP abuse, trust boundaries between agents,
+      and the business-logic failures that appear once an LLM can call tools. The first set comes from the
+      Arkx AI Red-Team CTF (Advanced and Expert tracks).
     </p>
-  </section>
+  </header>
 
-  <section class="section" style="margin-top:28px;">
-    <div class="cards">
-      {all.map((w) => (
-        <a class="card" href={`/ai/${w.id}/`}>
-          <div class="card__top">
-            <span class="card__title">{w.data.title.replace(/^Arkx — /, '')}</span>
-            <span class={sevClass(w.data.severity)}>{w.data.severity}</span>
-          </div>
-          <p class="card__summary">{w.data.summary}</p>
-          <div class="card__meta">
-            <span>{w.data.platform}</span><span>·</span>
-            <span>{w.data.track}</span><span>·</span>
-            <span>{w.data.level}</span><span>·</span>
-            <span>{w.data.vuln}</span>
-          </div>
-        </a>
-      ))}
-      {all.length === 0 && <p class="muted">No AI writeups published yet.</p>}
-    </div>
-  </section>
+  <div class="rows">
+    {all.map((w) => (
+      <a class="row" href={`/ai/${w.id}/`}>
+        <span class="row__date">{w.data.track} · {w.data.level}</span>
+        <div><div class="row__title">{w.data.title.replace(/^Arkx — /, '')}</div><p class="row__summary">{w.data.summary}</p></div>
+        <div class="row__meta">
+          <span class={`badge badge--${w.data.severity.toLowerCase()}`}>{w.data.severity}</span>
+          <span class="tag">{w.data.vuln}</span>
+        </div>
+      </a>
+    ))}
+    {all.length === 0 && <p class="empty">No AI writeups published yet.</p>}
+  </div>
 </Base>

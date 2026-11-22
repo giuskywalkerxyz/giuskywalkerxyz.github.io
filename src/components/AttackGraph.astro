@@ -1,0 +1,47 @@
+---
+// Attack-path graph from the YouTube banner: EXT → DMZ → WS-07 → SRV-SQL → SVC → target.
+const nodes = [
+  { id: 'ext', x: 30, y: 30, label: 'EXT', path: true },
+  { id: 'a', x: 18, y: 160 },
+  { id: 'dmz', x: 150, y: 74, label: 'DMZ', path: true },
+  { id: 'b', x: 278, y: 40 },
+  { id: 'c', x: 102, y: 214, path: true },
+  { id: 'ws', x: 245, y: 242, label: 'WS-07', path: true },
+  { id: 'd', x: 372, y: 108 },
+  { id: 'sql', x: 362, y: 208, label: 'SRV-SQL', path: true },
+  { id: 'e', x: 485, y: 70 },
+  { id: 'svc', x: 480, y: 300, label: 'SVC', path: true },
+  { id: 'f', x: 192, y: 336 },
+  { id: 'g', x: 340, y: 316 },
+  { id: 'h', x: 450, y: 370 },
+];
+const N = Object.fromEntries(nodes.map((n) => [n.id, n]));
+const target = { x: 548, y: 200 };
+const edges = [['ext', 'a'], ['a', 'c'], ['dmz', 'b'], ['b', 'ws'], ['b', 'd'], ['d', 'e'], ['ws', 'f'], ['f', 'g'], ['g', 'h'], ['sql', 'd'], ['c', 'f']];
+const path = ['ext', 'dmz', 'c', 'ws', 'sql', 'svc'];
+const pathD = path.map((id, i) => `${i ? 'L' : 'M'}${N[id].x} ${N[id].y}`).join(' ') + ` L${target.x} ${target.y}`;
+---
+<svg class="hero__graph" viewBox="0 0 580 400" role="img" aria-label="Attack path from an external foothold through the DMZ and internal hosts to the target">
+  <g stroke="currentColor" stroke-opacity="0.28" stroke-width="1" fill="none">
+    {edges.map(([a, b]) => <line x1={N[a].x} y1={N[a].y} x2={N[b].x} y2={N[b].y} />)}
+    <line x1={N.d.x} y1={N.d.y} x2={target.x} y2={target.y} />
+    <line x1={N.e.x} y1={N.e.y} x2={target.x} y2={target.y} />
+  </g>
+  <path class="ag-path" d={pathD} fill="none" stroke="var(--accent)" stroke-width="1.6" stroke-dasharray="5 5" />
+  {nodes.map((n) => (
+    n.path
+      ? <circle cx={n.x} cy={n.y} r="5.5" fill="var(--accent)" />
+      : <circle cx={n.x} cy={n.y} r="5" fill="var(--bg)" stroke="currentColor" stroke-opacity="0.55" stroke-width="1.2" />
+  ))}
+  <circle cx={target.x} cy={target.y} r="10" fill="none" stroke="currentColor" stroke-width="1.4" />
+  <circle cx={target.x} cy={target.y} r="4.5" fill="currentColor" />
+  <g font-family="JetBrains Mono, monospace" font-size="11" fill="currentColor" fill-opacity="0.6" letter-spacing="0.5">
+    {nodes.filter((n) => n.label).map((n) => <text x={n.x + 11} y={n.y - 8}>{n.label}</text>)}
+    <text x={target.x - 30} y={target.y + 30}>TARGET</text>
+  </g>
+</svg>
+<style>
+  .ag-path { animation: march 1.6s linear infinite; }
+  @keyframes march { to { stroke-dashoffset: -20; } }
+  @media (prefers-reduced-motion: reduce) { .ag-path { animation: none; } }
+</style>

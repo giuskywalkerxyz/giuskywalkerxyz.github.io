@@ -81,6 +81,30 @@ const articles = defineCollection({
   }),
 });
 
+// Disclosed CVEs / security advisories (own research). Public only once the
+// upstream advisory is published; drafts stay draft:true until then.
+const cves = defineCollection({
+  loader: glob({ pattern: '**/*.md', base: './src/content/cves' }),
+  schema: z.object({
+    title: z.string(),
+    cve: z.string().default('CVE-pending'),
+    ghsa: z.string().optional(),
+    vendor: z.string(),
+    product: z.string(),
+    cwe: z.array(z.string()).default([]),
+    cvss: z.string().optional(),
+    cvssVector: z.string().optional(),
+    severity: z.enum(['Low', 'Medium', 'High', 'Critical']),
+    status: z.enum(['reported', 'credited', 'published']).default('reported'),
+    date: z.coerce.date(),
+    tags: z.array(z.string()).default([]),
+    summary: z.string(),
+    advisoryUrl: z.string().url().optional(),
+    credited: z.boolean().default(false),
+    draft: z.boolean().default(false),
+  }),
+});
+
 const certifications = defineCollection({
   loader: glob({ pattern: '**/*.json', base: './src/content/certifications' }),
   schema: z.object({
@@ -99,4 +123,4 @@ const certifications = defineCollection({
   }),
 });
 
-export const collections = { writeups, protectedWriteups, articles, certifications, ai };
+export const collections = { writeups, protectedWriteups, articles, cves, certifications, ai };

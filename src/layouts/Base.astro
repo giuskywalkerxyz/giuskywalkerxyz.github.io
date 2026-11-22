@@ -1,22 +1,24 @@
 ---
-import Starfield from '../components/Starfield.astro';
 import '../styles/global.css';
+import { SITE, SOCIALS, bookingHref } from '../site';
 
 interface Props {
-  title: string;
+  title?: string;
   description?: string;
   active?: string;
 }
-const { title, description = 'HackTheBox writeups, security research & field notes from giuskywalker.', active } = Astro.props;
+const { title, description = SITE.description, active } = Astro.props;
+const pageTitle = title ? `${title} — ${SITE.name}` : SITE.title;
+
 const nav = [
-  { href: '/', label: 'home', key: 'home' },
+  { href: '/pentest/', label: 'services', key: 'pentest' },
   { href: '/writeups/', label: 'writeups', key: 'writeups' },
-  { href: '/ai/', label: 'ai', key: 'ai' },
+  { href: '/ai/', label: 'ai security', key: 'ai' },
   { href: '/articles/', label: 'articles', key: 'articles' },
   { href: '/certs/', label: 'certs', key: 'certs' },
-  { href: '/radio/', label: 'radio', key: 'radio' },
   { href: '/about/', label: 'about', key: 'about' },
 ];
+const canonical = new URL(Astro.url.pathname, Astro.site);
 ---
 <!doctype html>
 <html lang="en">
@@ -25,38 +27,84 @@ const nav = [
     <meta name="viewport" content="width=device-width, initial-scale=1" />
     <meta name="description" content={description} />
     <meta name="generator" content={Astro.generator} />
-    <title>{title}</title>
+    <meta name="theme-color" content="#f1efea" />
+    <link rel="canonical" href={canonical} />
+    <meta property="og:type" content="website" />
+    <meta property="og:title" content={pageTitle} />
+    <meta property="og:description" content={description} />
+    <meta property="og:url" content={canonical} />
+    <title>{pageTitle}</title>
     <link rel="icon" href="/favicon.svg" type="image/svg+xml" />
     <link rel="preconnect" href="https://fonts.googleapis.com" />
     <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-    <link href="https://fonts.googleapis.com/css2?family=JetBrains+Mono:wght@400;500;700&display=swap" rel="stylesheet" />
+    <link
+      href="https://fonts.googleapis.com/css2?family=Instrument+Serif:ital@0;1&family=Inter:wght@400;500;600&family=JetBrains+Mono:wght@400;500;700&display=swap"
+      rel="stylesheet"
+    />
   </head>
   <body>
-    <Starfield />
+    <a class="skip" href="#main">Skip to content</a>
     <header class="topbar">
       <div class="wrap">
-        <a class="brand" href="/">giuskywalker<span class="sigil">.sh</span></a>
-        <nav class="nav">
+        <a class="brand" href="/">
+          <span class="brand__name">Giulliano Amaral</span>
+          <span class="brand__tag">offensive security</span>
+        </a>
+        <button class="menu-toggle" type="button" aria-expanded="false" aria-controls="site-nav">menu</button>
+        <nav class="nav" id="site-nav" aria-label="Main">
           {nav.map((n) => (
             <a href={n.href} aria-current={active === n.key ? 'page' : undefined}>{n.label}</a>
           ))}
+          <a class="btn btn--primary btn--sm" href="/pentest/#scope">Scope a pentest</a>
         </nav>
       </div>
     </header>
 
-    <main class="wrap">
+    <main id="main" class="wrap">
       <slot />
     </main>
 
     <footer class="footer">
       <div class="wrap">
-        <div class="footer__crawl">Give in to the dark side of the Force.</div>
-        <p class="muted" style="margin:8px 0 0;">
-          © {new Date().getFullYear()} giuskywalker ·
-          <a href="https://github.com/giuskywalkerxyz">github</a> ·
-          built with <a href="https://astro.build">astro</a>
-        </p>
+        <div class="footer__grid">
+          <div>
+            <div class="footer__name">Giulliano Amaral</div>
+            <p>Penetration testing and offensive security research. {SITE.location}, working remotely worldwide.</p>
+          </div>
+          <div>
+            <h4>Work</h4>
+            <ul>
+              <li><a href="/pentest/">Services</a></li>
+              <li><a href="/pentest/#scope">Scope a pentest</a></li>
+              <li><a href={bookingHref()}>Book a call</a></li>
+              <li><a href="/about/">About</a></li>
+            </ul>
+          </div>
+          <div>
+            <h4>Elsewhere</h4>
+            <ul>
+              {SOCIALS.map((s) => <li><a href={s.href} rel="me noopener" target="_blank">{s.label}</a></li>)}
+            </ul>
+          </div>
+        </div>
+        <div class="footer__base">
+          <span>© {new Date().getFullYear()} Giulliano Amaral</span>
+          <span>// authorized testing only — written scope, every time</span>
+        </div>
       </div>
     </footer>
+
+    <script is:inline>
+      (function () {
+        var b = document.querySelector('.menu-toggle');
+        var n = document.getElementById('site-nav');
+        if (!b || !n) return;
+        b.addEventListener('click', function () {
+          var open = n.classList.toggle('open');
+          b.setAttribute('aria-expanded', open ? 'true' : 'false');
+          b.textContent = open ? 'close' : 'menu';
+        });
+      })();
+    </script>
   </body>
 </html>
